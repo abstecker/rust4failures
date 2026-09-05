@@ -13,3 +13,13 @@ pedantic = { level = "warn", priority = -1 }
 expect_used = "warn"
 unwrap_used = "warn"
 upper_case_acronyms = "allow"
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[features]
+wasm = ["dep:wasm-bindgen"]
+
+[dependencies.wasm-bindgen]
+version = "0.2"
+optional = true
