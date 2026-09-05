@@ -6,6 +6,8 @@ edition = "2024"
 
 [dependencies]
 
+[dev-dependencies]
+clap = "4.6.7"
 
 [lints.clippy]
 pedantic = { level = "warn", priority = -1 }
