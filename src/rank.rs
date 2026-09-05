@@ -42,3 +42,37 @@ impl From<char> for Rank {
         }
     }
 }
+
+#[cfg(test)]
+#[allow(non_snake_case)]
+mod rank_tests {
+    use super::*;
+    use rstest::rstest;
+
+    #[rstest]
+    #[case('A', Rank::ACE)]
+    #[case('a', Rank::ACE)]
+    #[case('K', Rank::KING)]
+    #[case('k', Rank::KING)]
+    #[case('Q', Rank::QUEEN)]
+    #[case('q', Rank::QUEEN)]
+    #[case('J', Rank::JACK)]
+    #[case('j', Rank::JACK)]
+    #[case('T', Rank::TEN)]
+    #[case('t', Rank::TEN)]
+    #[case('0', Rank::TEN)]
+    #[case('9', Rank::NINE)]
+    #[case('8', Rank::EIGHT)]
+    #[case('7', Rank::SEVEN)]
+    #[case('6', Rank::SIX)]
+    #[case('5', Rank::FIVE)]
+    #[case('4', Rank::FOUR)]
+    #[case('3', Rank::TREY)]
+    #[case('2', Rank::DEUCE)]
+    #[case('_', Rank::BLANK)]
+    #[case(' ', Rank::BLANK)]
+    #[case('z', Rank::BLANK)]
+    fn from__char(#[case] input: char, #[case] expected: Rank) {
+        assert_eq!(expected, Rank::from(input));
+    }
+}

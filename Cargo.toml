@@ -5,6 +5,9 @@ edition = "2024"
 
 [dependencies]
 
+[dev-dependencies]
+rstest = "0.23"
+
 [lints.clippy]
 pedantic = { level = "warn", priority = -1 }
 expect_used = "warn"
