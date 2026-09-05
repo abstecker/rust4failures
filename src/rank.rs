@@ -22,3 +22,22 @@ pub enum Rank {
     BLANK = 0,
 }
 
+impl From<char> for Rank {
+    fn from(c: char) -> Self {
+        match c {
+            'A' | 'a' => Rank::ACE,
+            'K' | 'k' => Rank::KING,
+            'Q' | 'q' => Rank::QUEEN,
+            'J' | 'j' => Rank::JACK,
+            'T' | 't' | '0' => Rank::TEN,
+            '9' => Rank::NINE,
+            '8' => Rank::EIGHT,
+            '7' => Rank::SEVEN,
+            '6' => Rank::SIX,
+            '5' => Rank::FIVE,
+            '4' => Rank::FOUR,
+            '3' => Rank::TREY,
+            '2' => Rank::DEUCE,
+        }
+    }
+}
