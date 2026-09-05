@@ -38,6 +38,7 @@ impl From<char> for Rank {
             '4' => Rank::FOUR,
             '3' => Rank::TREY,
             '2' => Rank::DEUCE,
+            _ => Rank::BLANK,
         }
     }
 }
