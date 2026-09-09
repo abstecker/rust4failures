@@ -1,0 +1,962 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Rust for Failures</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="How controlled failing is the way to build solid systems.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/step-meta.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust for Failures</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<blockquote>
+<p>Motto: Failure is a gift.</p>
+</blockquote>
+<p>This is a book about failure, specifically how failure, if managed correctly, and used as a tool for learning,
+is the best way to grow as a software developer and build strong systems. Since I am a huge fan of domain-driven design
+(DDD), we will be focusing on one specific domain. This will allow me to
+show just how deep one can go into a domain, and how, if designed properly, you can build amazing things.</p>
+<p>In order to do that, you need to give yourself a net, so that you can take chances and make mistakes and from them
+learn. I may not be the greatest, most accomplished programmer in the world, but I pride myself in being able to walk
+onto any team, programming in any language, and bring something to the table.</p>
+<p>As we go, we will be building this poker engine together, and you will get to see just how stupid I can be, and how
+in the end, it doesn't really matter. When you get right down to it, I code because it's fun. This was a side project
+I started to find some peace as the pandemic started taking over everyone's lives. Rust is a very stiff, controlling
+language, and at that time I felt I needed to find a little control in something.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="the-first-perspective"><a class="header" href="#the-first-perspective">The First Perspective</a></h1>
+<h2 id="tldr"><a class="header" href="#tldr">TL;DR</a></h2>
+<p>Taking our first look at our repository. Get the code to run locally, isolate the problems, and
+fix them.</p>
+<hr />
+<p>Systems are all about perspectives. When exploring a problem, I like to start with
+mapping out the different perspectives that will be interacting with it. For example, let's take
+a game of chess. In this case, an blindfold chess exhibition match between the #1 player in the world,
+<a href="https://en.chessbase.com/post/ice-barcelona-2026-exhibition">Magnus Carlsen</a>, and the #2 <a href="https://hikarunakamura.com/">Hikaru Nakamura</a>.</p>
+<p>Take a minute, and try to picture all of there different perspectives that can exist on a simple,
+15 minute game.</p>
+<p>...</p>
+<p>Here's what I came up with:</p>
+<ul>
+<li>Magnus while playing</li>
+<li>Hikaru while playing</li>
+<li>Each of the players coaching.</li>
+<li>Each of the players past experiences playing each other.</li>
+<li>The live, <a href="https://www.youtube.com/live/_gL44mmsLlI?t=5911s">play by play on Take Take Take</a> by GM David Howell and WFM Maud Rødsmoen.</li>
+<li>GothamChess aka Levy Rozman and GM Benjamin Bok doing play by play on <a href="https://www.youtube.com/watch?v=UlwCgM5x9IM">Hikaru's YouTube Channel</a>.</li>
+<li>GothamChess aka Levy Rozman giving his famous brand of <a href="https://www.youtube.com/watch?v=1YXsf6cmY4Y">analysis of the game</a> on his YouTube channel.</li>
+<li>A <a href="https://www.chess.com/events/ice-2026-fira-barcelona-event/01/Carlsen_Magnus-Nakamura_Hikaru">playable web version of the game</a> with analysis by Stockfish on Chess.com.</li>
+<li><a href="https://en.chessbase.com/post/ice-barcelona-2026-exhibition">Analysis of the game</a> on the chess database Chessbase.</li>
+<li>Some enlightening <a href="https://www.reddit.com/r/chess/comments/1qhz6i6/woah_didnt_even_know_ow_this_match_was_happening/">reddit commentary</a>.</li>
+</ul>
+<p>A simple, text representation of the game. But that's the final outcome, not the foundation. Could
+it be said that it's the very game itself? The pieces, on the board, governed by rules, passed
+down over generations.</p>
+<p>For software developent, I maintain that the foundation is the software developer, and unfortunately,
+probably the one that is least appreciated in modern enterprise.
+Your perspective on creating systems is what matters most. Our goal is to make things as smooth
+as possible for you, or any other developer to work on something. In the case of this book, I've
+designed it so that you can walk in at any point, and start working on the next, at any time. I've
+tried to make it as easy possible for you to code along, making this an experience were you are
+an essential part of the process.</p>
+<p>As we go along, building our poker engine, we will be adding more and more perspectives, as our system
+matures. Right now there is only one: you... the developer.</p>
+<p>It's my not so humber opinion, that how little companies consider this, is one of the most needless
+wastes of money in our industry. Case in point:</p>
+<blockquote>
+<p><em>Story time. Y'all can skip these things. I wouldn't be a Baker if I didn't litter this book
+with stories.</em></p>
+<p>It was my first day working on an engagement for a major clothing retailer.</p>
+<p><em>"So, what are you working on?"</em></p>
+<p>The question came from the gentleman sitting next to me on the open floor of their stunning
+corporate main office. <em>"Nothing. I don't access yet."</em></p>
+<p>He laughed. <em>"Oh, your signing bonus."</em></p>
+<p><em>"My what?"</em></p>
+<p><em>"Your signing bonus. Getting paid to do nothing... that's your signing bonus. Here it's around two weeks."</em></p>
+</blockquote>
+<p>Over the years, I have see signing bonuses that have gone on for months. I would bet that there are many
+who's signing bonus lasts for years.</p>
+<p>I hate initial setup chapters in coding books. Instead, let's start our project's codebase
+with a really messed up version based on my <a href="https://github.com/devplaybooks/rust_worlds_simplest_kata">World's Simplest Kata</a>. It's designed
+to show you many of the different ways that Rust code can fail continuous integration tools
+like GitHub Actions.</p>
+<p>Here are the files for our initial commit:</p>
+<pre><code class="language-shell">.github/workflows/CI.yaml
+.gitignore
+Cargo.lock
+Cargo.toml
+LICENSE-APACHE
+LICENSE-MIT
+src/lib.rs
+</code></pre>
+<h2 id="cargotoml"><a class="header" href="#cargotoml">Cargo.toml</a></h2>
+<p>We start with <code>Cargo.toml</code>, the manifest file that defines the key elements of our Rust project. You can see a breakdown
+of the entries in <a href="https://doc.rust-lang.org/cargo/reference/manifest.html">The Cargo Book</a>.</p>
+<p><a id="step-kata"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-001-kata/Cargo.toml" title="View full file">💾 <code>Cargo.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-kata/Cargo.toml#L1-L16" title="View source">L1–L16</a> · step 001 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-001-kata" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-001-kata" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">[package]
+name = "rust4failures"
+description = "Poker library."
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.98.1"
+authors = ["electronicpanopticon &lt;gaoler@electronicpanopticon.com&gt;", "Readers"]
+license = "MIT OR Apache-2.0"
+keywords = ["rust", "book", "poker", "wasm"]
+
+[dependencies]
+
+[dev-dependencies]
+
+[lints.clippy]
+pedantic = "warn"
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-001-kata</code></span></p>
+<p>Up next is <code>Cargo.lock</code>. It's autogenerated when you run <code>cargo build</code>. Don't
+touch it. We are committing it.</p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-001-kata/Cargo.lock" title="View full file">💾 <code>Cargo.lock</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-kata/Cargo.lock#L1-L7" title="View source">L1–L7</a> · step 001 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-001-kata" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-001-kata" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml"># This file is automatically @generated by Cargo.
+# It is not intended for manual editing.
+version = 4
+
+[[package]]
+name = "rust4failures"
+version = "0.0.1"
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-001-kata</code></span></p>
+<h3 id="linting"><a class="header" href="#linting">Linting</a></h3>
+<p>One thing that I want to call out is this line <code>pedantic = "warn"</code> under <code>lints.clippy</code>. I love linters
+on my projects, and add them whenever I can. It's best to use them from the start, since the longer
+you wait, the more you have to clean up when you add it.</p>
+<p>Rust's <a href="https://doc.rust-lang.org/clippy/index.html">Clippy linter</a> is the best in the business. And
+since I'm insane, I like to <a href="https://en.wikipedia.org/wiki/Up_to_eleven">dial it up to 11</a> with the
+<a href="https://doc.rust-lang.org/clippy/lints.html#pedantic">pedantic setting</a>.
+<img src="images/Spinal_Tap_-_Up_to_Eleven.jpg" alt="Spinal_Tap_-_Up_to_Eleven.jpg" /></p>
+<blockquote>
+<p>💡LESSON: Linters are a powerful way to keep your code clean, and catch basic coding issues.</p>
+</blockquote>
+<h2 id="librs"><a class="header" href="#librs">lib.rs</a></h2>
+<p>Now down to business. This is a simple <code>Hello, World</code> example. It's all going to be gone in a
+bit, but it's a good way to kick the tires on how we are ensuring quality in this project.</p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-001-kata/src/lib.rs" title="View full file">💾 <code>src/lib.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-kata/src/lib.rs#L1-L33" title="View source">L1–L33</a> · step 001 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-001-kata" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-001-kata" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">pub struct Hello;
+
+/// The [Helo] project is a simple hello world program. It comes with two methods:
+///
+/// 1. `hello` - This method takes a `String` and returns `Hello, {name}!`.
+/// 2. `hello_world` - A default method that returns `Hello, world!`.
+///
+/// ```
+/// use worlds_simplest_kata::Hello;
+///
+/// let hello = Hello::hello("everyone".to_string());
+/// assert_eq!("Hello, everyone.", hello);
+///
+/// ```
+impl Hello {
+    pub fn hello(name: String) -&gt; String {
+        format!("Hello,  {}!", name)
+    }
+
+    pub fn  hello__world() -&gt; &amp;'static str {
+        Hello::hello("wirld!".to_string())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn hello_world() {
+        assert_eq!("Hello, world!", Hello::hello__world());
+    }
+}</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-001-kata</code></span></p>
+<pre><code>            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            ()-()                            ()-()
+             \"/     NOW IT'S YOUR TURN!      \"/
+              `                                ` 
+</code></pre>
+<pre><code class="language-markdown">`hello` hands back an owned `String`. `hello__world` promises a borrowed
+`&amp;'static str`. Both cannot be true, so one of the two has to move.
+
+- The compiler suggests `&amp;Hello::hello(…)`. Take the suggestion, run
+  `cargo check` again, and read what it says next.
+- The other direction changes the signature. Which one leaves the caller —
+  the test at the bottom of the file — still working?
+- Everything else in this file is still wrong: the doc test names a crate that
+  does not exist, the greeting has two spaces, the world is spelled `wirld`,
+  and the method has two underscores. Leave them. Compiling and being correct
+  are different jobs, and this one is compiling.
+</code></pre>
+<h2 id="the-one-line-answer"><a class="header" href="#the-one-line-answer">The one-line answer</a></h2>
+<p>The signature moves, not the body. <code>hello__world</code> returns exactly what <code>hello</code>
+returns, and now it says so.</p>
+<p><a id="step-kata-compiles"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-002-kata-compiles/src/lib.rs" title="View full file">💾 <code>src/lib.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-002-kata-compiles/src/lib.rs#L20-L22" title="View source">L20–L22</a> · step 002 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-002-kata-compiles" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-002-kata-compiles" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust"><span class="boring">pub struct Hello;
+</span><span class="boring">
+</span><span class="boring">/// The [Helo] project is a simple hello world program. It comes with two methods:
+</span><span class="boring">///
+</span><span class="boring">/// 1. `hello` - This method takes a `String` and returns `Hello, {name}!`.
+</span><span class="boring">/// 2. `hello_world` - A default method that returns `Hello, world!`.
+</span><span class="boring">///
+</span><span class="boring">/// ```
+</span><span class="boring">/// use worlds_simplest_kata::Hello;
+</span><span class="boring">///
+</span><span class="boring">/// let hello = Hello::hello("everyone".to_string());
+</span><span class="boring">/// assert_eq!("Hello, everyone.", hello);
+</span><span class="boring">///
+</span><span class="boring">/// ```
+</span><span class="boring">impl Hello {
+</span><span class="boring">    pub fn hello(name: String) -&gt; String {
+</span><span class="boring">        format!("Hello,  {}!", name)
+</span><span class="boring">    }
+</span><span class="boring">
+</span>    pub fn  hello__world() -&gt; String {
+        Hello::hello("wirld!".to_string())
+    }
+<span class="boring">}
+</span><span class="boring">
+</span><span class="boring">#[cfg(test)]
+</span><span class="boring">mod tests {
+</span><span class="boring">    use super::*;
+</span><span class="boring">
+</span><span class="boring">    #[test]
+</span><span class="boring">    fn hello_world() {
+</span><span class="boring">        assert_eq!("Hello, world!", Hello::hello__world());
+</span><span class="boring">    }
+</span><span class="boring">}</span></code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-002-kata-compiles</code></span></p>
+<p>One word. The block holds the whole file, because the repository needs the
+whole file, but only the method was printed on the page.</p>
+<p><code>cargo check</code> is green. <code>cargo test</code> is not, which is why this step declares
+<code>expect="test_fail"</code>:</p>
+<pre><code class="language-console">$ cargo test
+thread 'tests::hello_world' panicked at src/lib.rs:31:9:
+assertion `left == right` failed
+  left: "Hello, world!"
+ right: "Hello,  wirld!!"
+</code></pre>
+<blockquote>
+<p>💡LESSON: "It compiles" is the first gate, not the last one. A green compiler
+only means the code is well formed. The tests are what say it is right.</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="continuous-integration"><a class="header" href="#continuous-integration">Continuous Integration</a></h1>
+<h2 id="github-actions"><a class="header" href="#github-actions">GitHub Actions</a></h2>
+<p>This is our traffic cop. There are many different ways to setup continuous integration, but
+<a href="https://docs.github.com/en/actions">GitHub Actions</a> is one of my favorites. I'd recommend
+that you check out the entire file for our CI guardrails. For now, I've highlighted two sections:
+<code>on</code> and the <code>test</code> job. On tells us that we are checking everything every time there's a push
+or a pull request. After a while, that may be too much, and we can dial it down, but for now
+it's good.</p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-001-kata/.github/workflows/CI.yaml" title="View full file">💾 <code>.github/workflows/CI.yaml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-kata/.github/workflows/CI.yaml#L3-L5" title="View source">L3–L5</a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-kata/.github/workflows/CI.yaml#L13-L27" title="View source">L13–L27</a> · step 001 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-001-kata" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-001-kata" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-yaml"># ... 2 lines elided — full file: https://github.com/abstecker/rust4failures/blob/step-001-kata/.github/workflows/CI.yaml
+on:
+  push:
+  pull_request:
+# ... 7 lines elided — full file: https://github.com/abstecker/rust4failures/blob/step-001-kata/.github/workflows/CI.yaml
+jobs:
+  test:
+    name: Rust ${{matrix.rust}}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: [stable, 1.98.1]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{matrix.rust}}
+      - run: cargo test --all
+# ... 40 lines elided — full file: https://github.com/abstecker/rust4failures/blob/step-001-kata/.github/workflows/CI.yaml
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-001-kata</code></span></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="introduction-1"><a class="header" href="#introduction-1">Introduction</a></h1>
+<blockquote>
+<p>Motto: Failure is a gift.</p>
+</blockquote>
+<p>I am a failure. I have been a failure all my life. I’ve dropped out of college three times.
+I graduated from high school with a D average. I’ve lost every professional French Horn audition
+I’ve ever taken. (I did win first horn at the California State Honor Band, but all the other horn
+players were so mad that I'd won they didn't talk to me, so I was miserable the whole time.) For
+a period of time I was homeless. (Ask me about sleeping in the San Francisco Symphony's Davies
+Symphony Hall musician's lounge.)</p>
+<p>In the fifth grade, I got the silver medal for having the second-worst car in the Cub Scouts
+Pinewood Derby. I would have been last, but the Scout Master from a rival troupe took the wheel
+that had fallen off from one of his kids' cars, hammered it back onto the car, and stole first
+from me by deliberately creating a car that wouldn’t roll. I even failed at failure. I was the
+worst. I should have gotten the gold, but no, I was the second worst. If you’r*e not last,
+you’re…?</p>
+<p>There’s only one thing that I’ve ever really felt like a master of. Nobody run the early morning
+solo coffee rush at a 7-11 better than me. At the Colma 7-11 I kept all five pots of coffee
+humming, making sure to keep them in a steady rotation, so that those smart-asses who tried to
+get the fresher pot of coffee by grabbing the one in the back were actually getting the oldest
+one. Not that it mattered. They were always fresh as fuck. A regular walked in, and I had their
+three packs of Benson &amp; Hedges Ultra Lights waiting for them at the register before they even
+asked. I was the shit, and all of my customers knew it, and were gracious to let me know, if in
+more family-friendly terms.</p>
+<p>Then, one simple event solidified it all for me. A beautiful motor home drove into the parking
+lot, and out stepped a gentleman to buy a cup of coffee and a pack of gum. We talked. He* wanted
+to thank me. He was doing really well now. He was working in a restaurant in downtown San
+Francisco and had really turned his life around, all thanks to me! Great. Just great.</p>
+<p>A year before, he was pointing a revolver at my face. He ran out with two-hundred dollars, only to be caught by
+the K-9 unit a few blocks away shortly thereafter. This nimrod had fucking robbed me, and he was
+already doing better than me. His life was on beautiful, and I was still that dumb smuck making
+$9 under the table, farting his life away at the 7-11 in the city where San Francisco buries its
+dead.</p>
+<p>It wasn’t until I became a professional programmer that I realized failure is a gift IF you learn
+from it. By testing this shit out of the systems I built, I turned my ability to fail into a superpower.
+The faster you fail, the faster you build solid shit.</p>
+<p>You see… it turns out that we’re all in the feedback business. You will get that feedback. It just
+depends on if you want to get it when you’re testing your tiles out in a controlled environment,
+or if you want to find out when every kid in school is watching your
+<a href="https://en.wikipedia.org/wiki/Space_Shuttle_Challenger_disaster">space shuttle explode with the first teacher in space</a>.
+I was one of those kids.</p>
+<p>The irony is, that there is such truth to this dynamic that it's shaped out global economy.
+The big money is on failing big. Why use your profits to improve customer satisfaction
+in your airline, when you can instead give yourself and your investor pals more cash with stock
+buybacks? Why earn profits when you can make money promising the moon as long as number go up and
+you get while the getting is good? Why ensure the best returns for your customers, when you can
+instead create dark money pools making sure that you always take the cream off the top first? Why
+represent people, when you can lock in a job for life and get hot stock tips and free gigs for
+your fam just by not getting anything actually done?</p>
+<p>Alas, this is not about failing slow in order to extract the maximum amount of damage
+and or grift. Fuck the fail leaches. This is about failing smart and failing fast. This is about building systems
+that are battle tested. Ones that get stronger the longer they are developed. Ones designed
+to maximize utility, while minimizing risk. I build systems that I am proud of when I walk away.
+This is how I do it.</p>
+<h2 id="who-am-i"><a class="header" href="#who-am-i">Who am I?</a></h2>
+<p>I'm Christoph. I'm a professional software developer who has been working for 28 years. I got my
+start in the SF dot.com boom, and went on to live through three tech sector crashes. I'm 60 years
+old, and can still walk onto any team coding in any language and deliver value by using the techniques
+that I will be cover in this book. My work is in cars and planes and banks and electric charging
+stations and government agencies that I am not allowed to talk about, in languages that you
+probably hate, like Java and PHP, and .NET and JavaScript and Ruby and Python and C++ and
+Kotlin, and TypeScript and C. No, I didn't make bank off of one of the startups that I worked for,
+and TBH, I got off pretty good walking away with nothing, given how fucked several of my friends got
+from companies where their contributions were critical. I did make a lot of fucking money for a lot of
+companies, and always by doing work that I was proud of. I try to be a force multiplier. Find gaps...
+automate away the gaps... repeat until no longer needed... walk away smiling. I've worked with dozens
+of developers who could code me under the table, and I'm greatful for how much I've learned from them.
+But there's only one Christoph, and I'm Christoph, mother-fucker.</p>
+<h2 id="why-poker"><a class="header" href="#why-poker">Why Poker?</a></h2>
+<p>My father's side of the family are all into card games, especially bridge. As someone who
+enjoys the occasional poker tournament, I became interested in what they call Game Theory
+Optimal (GTO) style of play. Often, pros will pay hundreds of dollars for good solver tools,
+but I thought that it would be more fun to write my own.</p>
+<p>Poker is a nice fixed domain that allows us to explore things in depth. It's a fun way to
+visually show code in action.</p>
+<p>NOTE: Gambling addiction is one of the plagues of our times. I am not a gembler. I just
+like to plunk down a few hundreds every now and then on a tournament. More often, I am
+watching WSOP tournaments and shows on Poker Go. Please be careful. This code is not designed
+to encourage you to gamble.</p>
+<h2 id="why-rust"><a class="header" href="#why-rust">Why Rust?</a></h2>
+<p>TBH, this is a bet. For a long time I've felt like the domain surface of complex software systems is much too wide,
+unorganized, and exposed. Now that we are living through the era of agentic coding solutions, we are seeing
+that risk manifest in real time. Agentic coding systems may not be the best at constructing architectural beauty, but
+they can sure as shit act like a million chaos monkeys. Organizations will have no choice but to tighten up everything.</p>
+<p>When you get right down to it, Rust is a trauma response from the years and years of defects created by other
+languages. I am a firm believer in making problems impossible instead of traditional creating controls to prevent them.
+Rust can create shit systems with the best of them, but by its very design it makes a whole collection of code crimes simply
+impossible to commit.</p>
+<p>Programming languages like JavaScript and Python were never designed to be the source of truth of complex systems.
+Suddenly, the velocity of code change is accelerating exponentially, and languages designed with flexibility in mind
+are seeing that feature being used against them. Anyone maintaining systems now is seeing that effect in real time.
+Security alerts about popular libraries are now a daily occurrence. Agentic coding systems may not be the best at
+constructing architectural beauty, but they can sure as shit act like a million chaos monkeys.</p>
+<p>You see, when I talk abour failing as a skill, it's all about controlled failure.
+Minimizing risk. Python, and other scripting languages like it, are so flexible that the variance they introduce,
+compounded by the velocity of the coding agents that produce it, creates a terrifying cocktail. Add on to that the fact
+that many of the people using these systems have no fucking clue what the code they are creating actually does.</p>
+<p>Rust, combined with disciplined design and technologies like web assembly, offer a way to simplify and organize what
+has been traditionally been a mess, outside of the exhalted chambers of bank mainframe system develoers. Not only do I believe that
+but I intend to prove it.</p>
+<p>That doesn't mean that these languages like Python and JavaScript won't play a supporting role
+in this exercise. One of my favorite returns of investment in the way I have been coding, is how easily I can take my
+core library and wrap it in <a href="https://pypi.org/project/pkcore-py/">Python</a> or
+<a href="https://www.npmjs.com/package/@imperialbower/pkcore">Node.JS</a>. How I can use that same single library and create not
+just <a href="https://github.com/ImperialBower/pkgto-web">one</a>, but several
+<a href="https://github.com/ImperialBower/pkarena0-web">web applications</a>, all using a blob of code that's under 5MBs, and
+working with the same, battle tested library functioning as a single source of truth.</p>
+<p>So, come along, as I show you how to turn failing into your superpower. Or don't.
+You're still going to fail. The question is, will you see it as the gift it really is?</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="hell-in-a-cell"><a class="header" href="#hell-in-a-cell">Hell in a Cell</a></h1>
+<h2 id="tldr-1"><a class="header" href="#tldr-1">TL;DR</a></h2>
+<p>I hate initial setup chapters in coding books. Just do the
+<a href="https://github.com/devplaybooks/rust_worlds_simplest_kata">The World's Simplest Kata</a> to make sure you have everything setup correctly.</p>
+<hr />
+<h1 id="editor-this-all-may-suck-could-just-leave-the-top-part"><a class="header" href="#editor-this-all-may-suck-could-just-leave-the-top-part">EDITOR: This all may suck. Could just leave the top part.</a></h1>
+<hr />
+<p>ANNOUNCER:</p>
+<blockquote>
+<p><em>Two programmers walk in, one walks out. Who will triumph...</em></p>
+</blockquote>
+<p><code>     </code>💥💥EXPLOSIONS💥💥</br>
+<code>     </code>QUEUE <a href="https://www.youtube.com/watch?v=_YYmfM2TfUA">Gonna Fly Now aka Rocky Theme</a></p>
+<blockquote>
+<p><em>the naive young developer trying to thrive in our cruel technocratic society...</em></p>
+</blockquote>
+<p><code>     </code>💥💥LASER SHOW💥💥</br>
+<code>     </code>QUEUE <a href="https://youtu.be/2IPAOxrH7Ro?t=86">Flight of the Concords' Robots</a></p>
+<blockquote>
+<p><em>or Broboto, the Soulless Savage AI Robot, trained by Silicon Valley, hellbent on terminating anyone who dares to clutch a keyboard?</em></p>
+</blockquote>
+<p>Sure, every sociopathic CEO on the planet is trying to replace you with AI, but can they? These programming streets are hard, and the defects don't play by <a href="https://en.wikipedia.org/wiki/Marquess_of_Queensberry_Rules">Marquess of Queensberry Rules</a>. Right now hundreds of thousands of clueless users and vapid script kiddies are foaming at the mouth to do incredibly stupid and cringeworthy things to any program released into the wild.</p>
+<p>Are you going to run back to mommy's safe warehouse job or are you going to step to it and take on the AI horde? Do you have what it takes? Do you have the intestinal fortitude to enter the</p>
+<pre><code class="language-txt">██╗  ██╗███████╗██╗     ██╗         ██╗███╗   ██╗     █████╗ 
+██║  ██║██╔════╝██║     ██║         ██║████╗  ██║    ██╔══██╗
+███████║█████╗  ██║     ██║         ██║██╔██╗ ██║    ███████║
+██╔══██║██╔══╝  ██║     ██║         ██║██║╚██╗██║    ██╔══██║
+██║  ██║███████╗███████╗███████╗    ██║██║ ╚████║    ██║  ██║
+╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝    ╚═╝╚═╝  ╚═══╝    ╚═╝  ╚═╝
+                                                             
+ ██████╗███████╗██╗     ██╗   ██████╗                        
+██╔════╝██╔════╝██║     ██║   ╚════██╗                       
+██║     █████╗  ██║     ██║     ▄███╔╝                       
+██║     ██╔══╝  ██║     ██║     ▀▀══╝                        
+╚██████╗███████╗███████╗███████╗██╗                          
+ ╚═════╝╚══════╝╚══════╝╚══════╝╚═╝                             
+</code></pre>
+<h2 id="the-cell"><a class="header" href="#the-cell">The Cell</a></h2>
+<p>You and your AI opponent will be locked into a Cell of the <a href="https://www.rust-lang.org/">Rust</a> programming language. Why Rust? Because it's difficult, and cruel, and the programmers who code in it are all assholes, and naturally, since I am an asshole, it is my favorite language. <em>Seriously, because of it's strict nature it's the perfect antidote to the AI vibe sludge coming out these days.</em></p>
+<p>The problem is simple: Hello, World!. Yes, <a href="https://en.wikipedia.org/wiki/%22Hello,_World!%22_program">Hello, motherfucking World!</a>. The most overused programming exercise on the planet; Beaten to death so hard that it's the turned into the finest McRib worthy <a href="https://en.wikipedia.org/wiki/Pink_slime">pink slime</a>.</p>
+<h3 id="the-opposition"><a class="header" href="#the-opposition">The Opposition</a></h3>
+<p>Your opponent is CoPilot. Yes, CoPilot; Sam Altman's &amp; Satya Nadella's purloined AI love child currently infesting every Microsoft based application it can sink it's binary claws into. <em>Oh my, how did I ever use Notepad before CoPilot? Thank you! Thank you!!! I'll never had to worry about how to end a sentence again!</em></p>
+<p>GitHub has added an adorable new feature: you can now get code reviews from CoPilot. So, I've taken the error littered original version of the <a href="https://github.com/devplaybooks/rust_worlds_simplest_kata">kata</a>, and ran it through a CoPilot code review, to see how well it can do.</p>
+<h2 id="let-us-go"><a class="header" href="#let-us-go">Let us go!</a></h2>
+<p>Here's your mission:</p>
+<ul>
+<li>Fork the  <a href="https://github.com/devplaybooks/rust_worlds_simplest_kata">The World's Simplest Kata</a> repo.</li>
+<li></li>
+<li>Make the <a href="https://github.com/devplaybooks/rust_worlds_simplest_kata/actions">failing GitHub Actions</a> green.</li>
+</ul>
+<hr />
+<p>Here's were you should stop and try to work through it yourself. If you're still having issues
+here's a walkthrough of me getting things to work:</p>
+<p>Step 1: Install Rust</p>
+<p>➔ TL;DR GOTO <a href="https://rustup.rs/">rustup.rs</a>. Do what it says.</p>
+<p>Rust has the best ecosystem for a programming language in the world. If you've banged your head against the wall trying to get a grip on how to manage Python projects, or lost yourself in a sea of gcc compiler flags, Rust will seem like a cool ocean's breeze.</p>
+<ul>
+<li>Install <a href="https://rustup.rs/">rustup</a>.</li>
+<li>run <code>rustup install</code></li>
+</ul>
+<p>You should see something like this:</p>
+<pre><code class="language-shell">$&gt; rustc --version
+rustc 1.97.1 (8bab26f4f 2026-07-14
+</code></pre>
+<h2 id="step-2-fork-it"><a class="header" href="#step-2-fork-it">Step 2: Fork it</a></h2>
+<p>IF you have a github account:
+fork the repo
+enable GitHub Actions for your fork.<sup class="footnote-reference" id="fr-1-1"><a href="#footnote-1">1</a></sup>
+ELSE if <em>brah, I don't mess with those giganto corporations, man</em>:
+download the code onto your machine.</p>
+<h2 id="question-does-it-build"><a class="header" href="#question-does-it-build">Question: Does it build?</a></h2>
+<pre><code class="language-rust">$&gt; cargo build
+`/Users/flubble/src/github.com/devplaybooks/rust_worlds_simplest_kata/Cargo.toml`
+
+Caused by:
+  rust-version 1.72.1 is incompatible with the version (1.85.0) required by the specified edition (2024)</code></pre>
+<p>It's insane how good the Rust compiler is at spelling out exactly what the problem is. The <code>../../../Cargo.toml</code> file says <code>edition = "2024"</code> but the Rist versions is set to <code>1.72.1</code>. Let's bump it up to what we're running, version <code>1.97.1</code>:</p>
+<pre><code class="language-diff">diff --git a/Cargo.toml b/Cargo.toml
+index 7220334..26bb72e 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -3,7 +3,7 @@ name = "worlds_simplest_kata"
+ version = "0.1.2"
+ authors = ["electronicpanopticon &lt;gaoler@electronicpanopticon.com&gt;"]
+ edition = "2024"
+-rust-version = "1.72.1"
++rust-version = "1.97.1"
+ description = "A kata to learn how to fix basic issues with rust code."
+ repository = "https://github.com/devplaybooks/rust_worlds_simplest_kata"
+ license = "GPL-3"
+</code></pre>
+<h3 id="step-4-does-it-build-now"><a class="header" href="#step-4-does-it-build-now">Step 4: Does it build now?</a></h3>
+<p>Let's see how we're doing:</p>
+<pre><code class="language-rust">$&gt; cargo build 
+   Compiling worlds_simplest_kata v0.1.2 (/Users/christoph/src/github.com/abstecker/worlds_simplest_kata_no_actions)
+error[E0308]: mismatched types
+  --&gt; src/lib.rs:23:9
+   |
+22 |     pub fn  hello__world() -&gt; &amp;'static str {
+   |                               ------------ expected `&amp;'static str` because of return type
+23 |         Hello::hello("wirld!".to_string())
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&amp;str`, found `String`
+   |
+help: consider borrowing here
+   |
+23 |         &amp;Hello::hello("wirld!".to_string())
+   |         +
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `worlds_simplest_kata` (lib) due to 1 previous error</code></pre>
+<p>Rust strings still terrify me. I feel like I am a lot better at dealing with them then when I first started out, but still... damn do they call out all of my deficiencies as a developer. My php, perl coding early ass didn't know shit... didn't learn shit... was just making it up as I went along... <em>ASIDE: I still am.</em></p>
+<p>Basically, a <a href="https://doc.rust-lang.org/std/string/struct.String.html">String</a> is is stored in the heap<sup class="footnote-reference" id="fr-2-1"><a href="#footnote-2">2</a></sup> of your program. It's like that extra suitcase you take on a trip so that you can fit in silly nick knacks you collect along your way. A <a href="https://doc.rust-lang.org/std/primitive.str.html">str primitive type</a>, on the other hand, is something that you can borrow, but not buy. It's like that key to the gas station restroom, chained to an old license plate. You can borrow it, but it's not yours.</p>
+<p>In this case, the <code>hello__world</code> function is returning <code>&amp;'static str</code>; what's called a string literal. It's a string that's burned into your program, and will exist unti it ends. It's like that tattoo you got that one night, in that place were no one can see it... you know the one.</p>
+<hr />
+<p>I can see three paths forward. Here's the simplest. I have a static function that's trying to return a static str, that insteads returning the results of a function that returns a String.</p>
+<blockquote>
+<p>Patient: <em>Doc, it hurts when I hold my arm like that.</em>
+Doctor: <em>Well don't hold arm like that.</em></p>
+</blockquote>
+<p>So, let's do what it says:</p>
+<pre><code class="language-rust">pub fn  hello__world() -&gt; &amp;'static str {  
+    "Hello, world!"  
+}</code></pre>
+<p>Now we're returning a pure String literal. Let's see how it does.</p>
+<pre><code class="language-shell">$&gt; cargo build                                                                                                                                             ─╯
+warning: method `hello__world` should have a snake case name
+  --&gt; src/lib.rs:22:13
+   |
+22 |     pub fn  hello__world() -&gt; &amp;'static str {
+   |             ^^^^^^^^^^^^ help: convert the identifier to snake case: `hello_world`
+   |
+   = note: `#[warn(non_snake_case)]` (part of `#[warn(nonstandard_style)]`) on by default
+
+warning: `worlds_simplest_kata` (lib) generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+</code></pre>
+<p>It builds, but with a warning. First, ret's get rid of that warning, and remove the dunder, or double underscore, from the <code>hello__world()</code> function.</p>
+<blockquote>
+<p>Did you know that a double underscore in some programmering circles is called a dunder? I learned that while attending one of the <a href="http://cohpy.org/">Central Ohio Python User's Group</a> meetings. In python code you will see functions named <a href="https://www.geeksforgeeks.org/python/__init__-in-python/"><strong><strong>init</strong></strong> </a>, and they would call them "dunder inits."</p>
+</blockquote>
+<p>Here's the update to the function that matches the recomentation from error message as close as possible:</p>
+<pre><code class="language-rust">pub fn hello_world() -&gt; &amp;'static str {  
+   "Hello, world!"  
+}</code></pre>
+<p>Let's see how that does.</p>
+<pre><code class="language-bash">$&gt; cargo build
+   Compiling worlds_simplest_kata v0.1.2 (/Users/christoph/src/github.com/devplaybooks/rust_worlds_simplest_kata)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.00s
+</code></pre>
+<p>Nice... it builds fine.</p>
+<pre><code class="language-shell">cargo run
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running `target/debug/worlds_simplest_kata`
+Hello, world!
+</code></pre>
+<p>And it runs without a problem.</p>
+<p>Let's see if the tests are green:</p>
+<pre><code class="language-bash">$&gt; cargo test
+Compiling worlds_simplest_kata v0.1.2 (/Users/christoph/src/github.com/devplaybooks/rust_worlds_simplest_kata)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.15s
+     Running unittests src/lib.rs (target/debug/deps/worlds_simplest_kata-c6a62a2629fcb368)
+
+running 1 test
+test tests::hello_world ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/worlds_simplest_kata-cfecd8ab1322d86e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+</code></pre>
+<p>yes, but...</p>
+<pre><code class="language-bash">   Doc-tests worlds_simplest_kata
+running 1 test
+test src/lib.rs - Hello (line 10) ... FAILED
+failures:
+---- src/lib.rs - Hello (line 10) stdout ----
+Test executable failed (exit status: 101).
+
+stderr:
+
+thread 'main' (876041) panicked at /var/folders/yc/zz4hyvrx0rzc5tdpkjgrkmy00000gn/T/rustdoctestCeSnEA/doctest_bundle_2024.rs:9:1:
+assertion `left == right` failed
+  left: "Hello, everyone."
+ right: "Hello,  everyone!"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+failures:
+    src/lib.rs - Hello (line 10)
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 0.69s; merged doctests compilation took 0.36s
+error: doctest failed, to rerun pass `--doc`
+</code></pre>
+<p>This is a failure in the test that is written inside the documentation for the code.</p>
+<p>I love Rust's <a href="https://doc.rust-lang.org/rustdoc/write-documentation/documentation-tests.html">documentation tests</a>. One on the biggest challenges in keeping software up to date is the documentation. Changes will be made to the code, but everyone's in such a hurry, that they forget to keep the documentation up to date as well. Often, you will hear from developers that it's just better to just forget it, since it's often less than useless.</p>
+<p>With doctests, not only do you ensure that you have up to date documentation, but you also provide examples to your users that you know are correct.</p>
+<p>And, as is the case most of the time, the compiler spells out the problem. There's an extra space in the value returned from the <code>hello()</code> function.</p>
+<p>Take 3:</p>
+<pre><code class="language-bash">$&gt; cargo test
+...
+ left: "Hello, everyone."
+right: "Hello, everyone!"
+</code></pre>
+<p>Almost... Let's fix the punctuation.</p>
+<pre><code class="language-bash">cargo test
+   Compiling worlds_simplest_kata v0.1.2 (/Users/christoph/src/github.com/devplaybooks/rust_worlds_simplest_kata)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.49s
+     Running unittests src/lib.rs (target/debug/deps/worlds_simplest_kata-c6a62a2629fcb368)
+
+running 1 test
+test tests::hello_world ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/worlds_simplest_kata-cfecd8ab1322d86e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests worlds_simplest_kata
+
+running 1 test
+test src/lib.rs - Hello (line 10) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.61s; merged doctests compilation took 0.29s
+</code></pre>
+<p>Boom! We are green. Ship it!</p>
+<pre><code class="language-bash">$&gt; git add .
+$&gt; git commit -m "Fixed failing tests, and compilation errors"
+[bookwalker_fix1_static 7be5b8a] Fixed failing tests, and compilation errors
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+ $&gt; git push
+ ...
+</code></pre>
+<p>Let's see</p>
+<pre><code class="language-bash">
+</code></pre>
+<p>There are, however, other ways...</p>
+<p>...</p>
+<p>...</p>
+<p>...</p>
+<p>TAKE 2:</p>
+<p>Looking at the error, it's clear that they are mixing up the trwo</p>
+<p>If you want to see a a microcosm that contains almost everything maddening about Rust, this file is it. Strings in Rust are pure pain.</p>
+<p>Nope. We've still got a problem, and this one is the
+and it points to what is probably the hardest thing to understand about Rust programming: strings. Rust pulls no punches. If you come from a scripting background like JavaScript or Python, Rust strings are going to seem like pain incarnate. Unlike most other languages, Rust puts it all out there. Strings aren't easy.</p>
+<p>Resources:</p>
+<ul>
+<li><a href="https://doc.rust-lang.org/rust-by-example/std/str.html">Strings - Rust by Example</a></li>
+</ul>
+<h4 id="question-2-do-the-unit-tests-pass"><a class="header" href="#question-2-do-the-unit-tests-pass">Question #2 Do the unit tests pass?</a></h4>
+<p>This is the <a href="https://en.wikipedia.org/wiki/Crossing_the_Rubicon">Rubicon</a> when it comes to builds. It is essential that a team keep their unit tests green, aka passing. Once you turn this check off because you "don't have time" you might as well turn in your keyboard and let the AI take over.</p>
+<p>One of the key types of tests for any running system are what's called regression tests. <a href="https://en.wikipedia.org/wiki/Regression_testing">Wikipedia defines it</a> like this:</p>
+<blockquote>
+<p><strong>Regression testing</strong> (rarely, <em>non-regression testing</em><a href="https://en.wikipedia.org/wiki/Regression_testing#cite_note-1">[1]</a>) is re-running <a href="https://en.wikipedia.org/wiki/Functional_testing" title="Functional testing">functional</a> and <a href="https://en.wikipedia.org/wiki/Non-functional_testing" title="Non-functional testing">non-functional tests</a> to ensure that previously developed and tested software still performs as expected after a change.<a href="https://en.wikipedia.org/wiki/Regression_testing#cite_note-2">[2]</a> If not, that would be called a <em><a href="https://en.wikipedia.org/wiki/Software_regression" title="Software regression">regression</a></em>.</p>
+</blockquote>
+<p><em>OLD MAN VOICE:</em> Back in my day we had what were called Quality Assurance Engineers. These were people who went through your code to make sure that the things you promised to deliver  actually were, and that you didn't break any of the existing functionality to do so.</p>
+<p>Good coverage from unit tests translates into an army of automated regression testers ready to descend upon your code at the push of a button.</p>
+<blockquote>
+<p><em>And for the record, Quality Assurance is still an essential role in any software worth its salt. But with unit tests, they can spend their time doing what's called exploratory testing. The big flaw in unit tests are that they're a self fulfilling prophecy. You can only test the things you think of. A good QA dev can bring down a site in ways that <a href="https://www.youtube.com/watch?v=GqcSXt1CQOQ">many would call unnatural</a>.</em></p>
+<p>STORY TIME: I was leading a team at a small rust belt financial institution. The consulting practice I was working for at the time  brought in a QA by the name of Paul Oaks. When we were ready to test out the front end of our application, he sat down and typed in an address. The site instantly self destructed. It took him less than one minute to destroy our application.</p>
+<p>So, I'm like, how the F' did you do that? Paul collected bizarre addresses that he knew would crap out at a lot of commercial address validation services. <strong>RESPECT YOUR QA.</strong></p>
+</blockquote>
+<h4 id="question-3-do-all-the-clippy-lints-pass"><a class="header" href="#question-3-do-all-the-clippy-lints-pass">Question #3 Do all the <a href="https://doc.rust-lang.org/clippy/">Clippy</a> lints pass?</a></h4>
+<p>No, not that [Clippy]... Rust's linter Clippy.</p>
+<p>Linting is a form of static code analysis that checks that you're not making certain kinks of programming decisions that make your code hard to maintain. Large codebases will generally establish a common set of linting configurations so that everyone is on the same page.</p>
+<p>Linting is one of the great ways to keep a codebase clean, and consistent. It's easy to miss simple, stupid things in the rush to get things out the door. A good linter that's tied to a continuous integration tool like <a href="https://github.com/features/actions">GitHub Actions</a> or <a href="https://www.jenkins.io/">Jenkins</a></p>
+<p>For this kata, I've configured the linting at the top of the <a href="https://github.com/devplaybooks/rust_worlds_simplest_kata/blob/main/src/lib.rs">src/lib.rs</a> file:</p>
+<pre><code class="language-rust">#![warn(clippy::pedantic)]  
+  
+pub struct Hello;</code></pre>
+<h4 id="question-4--is-the-code-properly-formatted-"><a class="header" href="#question-4--is-the-code-properly-formatted-">Question #4  Is the code properly <a href="https://github.com/rust-lang/rustfmt">formatted</a> ?</a></h4>
+<p>The <a href="https://github.com/rust-lang/rustfmt">fmt</a> check seems like a trivial one, but in large teams a difference of formatting can cause havoc on a large pull request.</p>
+<h4 id="question-5-do-all-the-rustdoc-lints-pass"><a class="header" href="#question-5-do-all-the-rustdoc-lints-pass">Question #5 Do all the [Rustdoc lints] pass?</a></h4>
+<p>I LOVE LOVE LOVE how Rust handles documentation. One of the biggest challenges in writing software is keeping its documentation up to date. Code samples quickly become wrong, and rushed developers are rarely given enough time to make sure that the docs are up to date, especially within an organization with a predominance of what I call "neck breathers."</p>
+<p><a href="https://doc.rust-lang.org/rustdoc/lints.html">Rustdoc lints</a> and <a href="https://doc.rust-lang.org/rustdoc/write-documentation/documentation-tests.html">doc tests</a> eliminate almost all of this problem by catching references to code blocks that don't exist, and example code that doesn't compile or pass tests. This is HUGE! One of the biggest standoffs between developers and stakeholders is documentation. Stakeholders demand it, and devs point out that it is out of date as soon as it ships. Doc tests eliminate that issue. The linters check that you are pointing to the correct places in the code, and the compiler makes sure that any exxamples you include work against the actual codebase.</p>
+<p>Thanks to GitHub <a href="https://github.com/features/actions">Actions</a> you can automate all of those features so that they run every time you push up code so that everyone is always on the same page.</p>
+<p><strong>MORAL:</strong> <em>Automate the stupid stuff.</em></p>
+<hr />
+<h2 id="lets-see-how-copilot-did"><a class="header" href="#lets-see-how-copilot-did">Let's see how CoPilot did.</a></h2>
+<p>Wow, CoPilot fixed every test. Six of the GitHub continuous integration gates passed. The problem
+is, that there are seven. <em><a href="https://www.youtube.com/shorts/9inOVXhe14U">Sad trombone sound</a></em></p>
+<p><a href="https://github.com/folkengine/wsk_CoPilot2/actions/runs/31438082328/job/93617372018?pr=1#step:4:2">CoPilot couldn't fix the clippy lints</a>:</p>
+<pre><code class="language-shell">Run cargo clippy -- -Dclippy::all -Dclippy::pedantic
+  cargo clippy -- -Dclippy::all -Dclippy::pedantic
+  shell: /usr/bin/bash -e {0}
+  env:
+    RUSTFLAGS: -Dwarnings
+    CARGO_HOME: /home/runner/.cargo
+    CARGO_INCREMENTAL: 0
+    CARGO_TERM_COLOR: always
+    Checking worlds_simplest_kata v0.1.2 (/home/runner/work/rust_worlds_simplest_kata/rust_worlds_simplest_kata)
+error: this method could have a `#[must_use]` attribute
+  --&gt; src/lib.rs:18:12
+   |
+18 |     pub fn hello(name: String) -&gt; String {
+   |            ^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#must_use_candidate
+   = note: `-D clippy::must-use-candidate` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::must_use_candidate)]`
+help: add the attribute
+   |
+18 ~     #[must_use]
+19 ~     pub fn hello(name: String) -&gt; String {
+   |
+
+error: this argument is passed by value, but not consumed in the function body
+  --&gt; src/lib.rs:18:24
+   |
+18 |     pub fn hello(name: String) -&gt; String {
+   |                        ^^^^^^ help: consider changing the type to: `&amp;str`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#needless_pass_by_value
+   = note: `-D clippy::needless-pass-by-value` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::needless_pass_by_value)]`
+
+error: variables can be used directly in the `format!` string
+  --&gt; src/lib.rs:19:9
+   |
+19 |         format!("Hello, {}!", name)
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#uninlined_format_args
+   = note: `-D clippy::uninlined-format-args` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::uninlined_format_args)]`
+help: change this to
+   |
+19 -         format!("Hello, {}!", name)
+19 +         format!("Hello, {name}!")
+   |
+
+error: this method could have a `#[must_use]` attribute
+  --&gt; src/lib.rs:22:12
+   |
+22 |     pub fn hello_world() -&gt; String {
+   |            ^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#must_use_candidate
+help: add the attribute
+   |
+22 ~     #[must_use]
+23 ~     pub fn hello_world() -&gt; String {
+   |
+
+error: could not compile `worlds_simplest_kata` (lib) due to 4 previous errors
+Error: Process completed with exit code 101.
+</code></pre>
+<hr>
+<ol class="footnote-definition"><li id="footnote-1">
+<p>GitHub actions have become an <a href="https://medium.com/@simardeep.oberoi/unveiling-github-actions-vulnerabilities-a-comprehensive-technical-guide-to-attack-vectors-and-6a26a83e9fb2">attack vector </a>of late, so always be careful about what you run. <a href="#fr-1-1">↩</a></p>
+</li>
+<li id="footnote-2">
+<p><a href="https://www.youtube.com/@MichaelSambol">Michael Sambol</a> - <a href="https://www.youtube.com/watch?v=0wPlzMU-k00">Heaps: Intro in 3 minutes</a> <a href="#fr-2-1">↩</a></p>
+</li>
+</ol>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
