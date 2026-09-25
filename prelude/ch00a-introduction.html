@@ -1,0 +1,358 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Introduction - Rust for Failures</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="How controlled failing is the way to build solid systems.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/step-meta.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust for Failures</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<blockquote>
+<p>Motto: Failure is a gift.</p>
+</blockquote>
+<p>I was 20 years old when the motor home pulled into the parking lot of the 7-11 when I was
+working solo at the
+<a href="https://www.google.com/maps/place/1010+Hillside+Blvd,+Daly+City,+CA+94014/@37.6897939,-122.4612692,54a,75y,219.32h,82.81t/data=!3m7!1e1!3m5!1sqwK8hlHt7G9vtZKahcsCIg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D7.189452548127392%26panoid%3DqwK8hlHt7G9vtZKahcsCIg%26yaw%3D219.31739032217254!7i16384!8i8192!4m15!1m8!3m7!1s0x808f7c0efaf5a78b:0x9cad5aa0d03c3ca1!2s1010+Hillside+Blvd,+Daly+City,+CA+94014!3b1!8m2!3d37.689577!4d-122.4615136!16s%2Fg%2F11b8v6x6dc!3m5!1s0x808f7c0efaf5a78b:0x9cad5aa0d03c3ca1!8m2!3d37.689577!4d-122.4615136!16s%2Fg%2F11b8v6x6dc?entry=ttu&amp;g_ep=EgoyMDI2MDkwOC4wIKXMDSoASAFQAw%3D%3D">Colma 7-11</a>.
+A man stepped out, and walked into the store, headed over to the coffee pots and poured himself a cup.
+Approaching the register, he extended out his hand to me.</p>
+<p>"I just wanted to thank you."</p>
+<p>That's when I recognized him. A year before, he was pointing a gun at my face, robbing the store of
+$202 dollars. The police caught him a few hours later with the thanks of their K-9 unit.</p>
+<p>It was because of me and the Daly City PD that he turned his entire light around. Now he was
+working as a cook in an amazing SF restaurant, and his entire life was for the better. I took his hand,
+laughed, and said "you're welcome. That will be $2."</p>
+<p>Failure is a gift, if you learn from it.</p>
+<p>Meanwhile, I was still the same loser I was for the last two years, making shit wages, stocking
+shelves, mopping the floors, and making sure that the coffee was always fresh. I kept working
+there for another year, when a man with six bullets in him, on probation, walked into
+the store, and pointed a semi-automatic pistol at my face as his 16 year old partner kept watch
+for police.</p>
+<p>Failure is a gift, if you learn from it.</p>
+<p>Stealing a pack of Swisher Sweets and the $247 dollars from the register, they rushed out of the
+door and drove away in a stolen car, which they crashed into the Balboa Bart Station shortly
+thereafter where they were quickly arrested.</p>
+<p>As I stared down the barrel of the rusty gun, I didn't see my life flash before my eyes. What I did see surprised me.
+You see, for the last few years I had been dating this girl who was a vegetarian. So I decided to be a vegitarian
+too. At that moment, however, I had one thought in my mind: <em>man, I really want a pepperoni pizza.</em> So that day, I
+went out for lunch with my friend Irving, and stopped being a vegetarian. It would take me another 10 years to get
+my shit together.</p>
+<p>Failure is a gift, if you learn from it.</p>
+<p>The thing is, I've been a failure all my life. I’ve dropped out of college three times.
+I graduated from high school with a D average. I’ve lost every professional French Horn audition
+I’ve ever taken. I spent a time homeless crashing on friends couches when they would let me, and
+sleeping on Bart trains, parks and the San Francisco Symphony's Davies Symphony Hall musician's lounge.
+(I knew the security guards because I used to play in the SF Symphony Youth Orchestra. Always be nice to the people
+who control the doors.)</p>
+<p>It would take me about 10 years to finally start figure it out.</p>
+<p>My hobby Christmas Songbook website and gotten me a $350 bill from my ISP. At the time I was making $7 an hour as a
+walking messenger in SF. I was fucked.</p>
+<p>Except, it turns out I wasn't. The reason I got the spike in gtraffic was because I was written up and the prestigious
+Yahoo! magazine, which in turn was copied in the New York Times. Within a year, I was working for a startup called
+XOOM.com. 28 years later I am still programming.</p>
+<p>Turns out, that failure fast, and failing with intent creates learning systems that get stronger and they grow.
+Controlled failing is one of a developers greatest superpower.</p>
+<p>I am proof positive of this. I don't have any degrees; I am completely self taught; and I am an old fuck still employed
+through three market crashes.</p>
+<p>I would argue that failure is the single most powerful force in the greatest super power on the planet. The big money
+is on failing big. Why use your profits to improve customer satisfaction
+in your airline, when you can instead give yourself and your investor pals more cash with stock
+buybacks? Why earn profits when you can make money promising the moon as long as number go up and
+you get while the getting is good? Why ensure the best returns for your customers, when you can
+instead create dark money pools making sure that you always take the cream off the top first? Why
+represent people, when you can lock in a job for life and get hot stock tips and free gigs for
+your fam just by not getting anything actually done?</p>
+<p>Failure is a superpower. Some choose to use it for evil, and are incredibly wealthy. Others choose to use it for good,
+and are incredibly poor in comparison. I choose to use it for good, building systems that I am always proud to walk
+away from. Stupid me.</p>
+<h2 id="who-am-i"><a class="header" href="#who-am-i">Who am I?</a></h2>
+<p>I'm Christoph. I'm a professional software developer who has been working for 28 years. I got my
+start in the SF dot.com boom, and went on to live through three tech sector crashes. I'm 60 years
+old, and can still walk onto any team coding in any language and deliver value by using the techniques
+that I will be cover in this book. My work is in cars and planes and banks and electric charging
+stations and government agencies that I am not allowed to talk about, in languages that you
+probably hate, like Java and PHP, and .NET and JavaScript and Ruby and Python and C++ and
+Kotlin, and TypeScript and C. No, I didn't make bank off of one of the startups that I worked for,
+and TBH, I got off pretty good walking away with nothing, given how fucked several of my friends got
+from companies where their contributions were critical. I did make a lot of fucking money for a lot of
+companies, and always by doing work that I was proud of. I try to be a force multiplier. Find gaps...
+automate away the gaps... repeat until no longer needed... walk away smiling. I've worked with dozens
+of developers who could code me under the table, and I'm greatful for how much I've learned from them.
+But there's only one Christoph, and I'm Christoph, mother-fucker.</p>
+<h2 id="why-poker"><a class="header" href="#why-poker">Why Poker?</a></h2>
+<p>Poker is a nice fixed domain, with clear rules that allow us to focus on code instead of research. It's a fun way to
+visually show code in action. Plus,
+I like playing and watching poker, and it's fun. I an interested in what they call Game Theory
+Optimal (GTO) style of play. Instead of paying hundreds of dollars for a one of those pro solver tools,
+I thought that it would be more fun to write my own.</p>
+<p>NOTE: Gambling addiction is one of the plagues of our times. I am not a gembler. I just
+like to plunk down a few hundreds every now and then on a tournament. More often, I am
+watching WSOP tournaments and shows on Poker Go. Please be careful. This code is not designed
+to encourage you to gamble.</p>
+<h2 id="why-rust"><a class="header" href="#why-rust">Why Rust?</a></h2>
+<p>TBH, this is a bet. For a long time I've felt like the domain surface of complex software systems is much too wide,
+unorganized, and exposed. Now that we are living through the era of agentic coding solutions, we are seeing
+that risk manifest in real time. Agentic coding systems may not be the best at constructing architectural beauty, but
+they can sure as shit act like a million chaos monkeys. Organizations will have no choice but to tighten up everything.</p>
+<p>When you get right down to it, Rust is a trauma response from the years and years of defects created by other
+languages. I am a firm believer in making problems impossible instead of traditional creating controls to prevent them.
+Rust can create shit systems with the best of them, but by its very design it makes a whole collection of code crimes simply
+impossible to commit.</p>
+<p>Programming languages like JavaScript and Python were never designed to be the source of truth of complex systems.
+Suddenly, the velocity of code change is accelerating exponentially, and languages designed with flexibility in mind
+are seeing that feature being used against them. Anyone maintaining systems now is seeing that effect in real time.
+Security alerts about popular libraries are now a daily occurrence. Agentic coding systems may not be the best at
+constructing architectural beauty, but they can sure as shit act like a million chaos monkeys.</p>
+<p>You see, when I talk abour failing as a skill, it's all about controlled failure.
+Minimizing risk. Python, and other scripting languages like it, are so flexible that the variance they introduce,
+compounded by the velocity of the coding agents that produce it, creates a terrifying cocktail. Add on to that the fact
+that many of the people using these systems have no fucking clue what the code they are creating actually does.</p>
+<p>Rust, combined with disciplined design and technologies like web assembly, offer a way to simplify and organize what
+has been traditionally been a mess, outside of the exhalted chambers of bank mainframe system develoers. Not only do I believe that
+but I intend to prove it.</p>
+<p>That doesn't mean that these languages like Python and JavaScript won't play a supporting role
+in this exercise. One of my favorite returns of investment in the way I have been coding, is how easily I can take my
+core library and wrap it in <a href="https://pypi.org/project/pkcore-py/">Python</a> or
+<a href="https://www.npmjs.com/package/@imperialbower/pkcore">Node.JS</a>. How I can use that same single library and create not
+just <a href="https://github.com/ImperialBower/pkgto-web">one</a>, but several
+<a href="https://github.com/ImperialBower/pkarena0-web">web applications</a>, all using a blob of code that's under 5MBs, and
+working with the same, battle tested library functioning as a single source of truth.</p>
+<h2 id="spoiler-alert"><a class="header" href="#spoiler-alert">SPOILER ALERT</a></h2>
+<p>Here are a few examples of what I am talking about. When I started out on this project, I was curious
+about web assembly. I wanted to build my library, and see how it faired from the command line and maybe
+through a web page. Now, thanks to web assembly, I can create multiple purely client side tools, such
+as a <a href="https://imperialbower.github.io/pkgto-web/">GTO style card combination analyzer</a>,
+and a client based <a href="https://imperialbower.github.io/pkarena0-web/">poker table where you play against eight bots</a>,
+as well as binding it to a <a href="https://pypi.org/project/pkcore-py/">Python</a> or
+<a href="https://www.npmjs.com/package/@imperialbower/pkcore">Node.JS</a> library. These are all built with
+the same foundational codebase. There are many other examples that I have been playing with, including
+a client/server architecture where you can play against various AI bots, and a command line
+terminal client for those old school like me.</p>
+<p>So, come along, as I show you how to turn failing into your superpower. Or don't.
+You're still going to fail. The question is, will you see it as the gift it really is?</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../prelude/ch00_-thelos.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../prelude/ch00b-what_this_is.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+
+                    <footer class="page-footer">
+                        <a href="https://github.com/abstecker/rust4failures">https://github.com/abstecker/rust4failures</a>
+                    </footer>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../prelude/ch00_-thelos.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../prelude/ch00b-what_this_is.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

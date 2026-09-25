@@ -1,0 +1,445 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Rank - Rust for Failures</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="How controlled failing is the way to build solid systems.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/step-meta.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust for Failures</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="rank-and-the-match-that-would-not-compile"><a class="header" href="#rank-and-the-match-that-would-not-compile">Rank, and the match that would not compile</a></h1>
+<p>A deck of cards is a good place to start a library, because a card is small
+enough to hold in your head and stubborn enough to punish sloppiness. A card has
+a rank and a suit. This chapter builds the rank.</p>
+<p>It also does something you may not be used to in a book: it commits code that
+does not compile, on purpose, and leaves it there. That commit is tagged. You
+can check it out. You can run <code>cargo check</code> inside it and watch it fail.</p>
+<p>That is the argument of this whole book. A failure you have never seen is a
+failure you do not understand. So we are going to look at them.</p>
+<h2 id="clearing-the-ground"><a class="header" href="#clearing-the-ground">Clearing the ground</a></h2>
+<p>Chapter 1 left a <code>Hello</code> kata in <code>src/lib.rs</code>, with a test that fails. It did its
+job, which was to show the gate working, and a poker library has no use for it.
+Remove it, and leave an empty <code>mods</code> region behind for the modules to come.</p>
+<p><a id="step-clear-the-kata"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-004-clear-the-kata/src/lib.rs" title="View full file">💾 <code>src/lib.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-004-clear-the-kata/src/lib.rs#L1-L1" title="View source">L1–L1</a> · step 004 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-004-clear-the-kata" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-004-clear-the-kata" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">//! Poker library.
+// bower:begin mods
+// bower:end mods</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-004-clear-the-kata</code></span></p>
+<h2 id="the-rank-itself"><a class="header" href="#the-rank-itself">The rank itself</a></h2>
+<p><a id="step-rank-enum"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-005-rank-enum/src/rank.rs" title="View full file">💾 <code>src/rank.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-005-rank-enum/src/rank.rs#L1-L24" title="View source">L1–L24</a> · step 005 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-005-rank-enum" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-005-rank-enum" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">// bower:begin rank
+/// The rank of a playing card.
+///
+/// The discriminants are the card's value in play, which is why the ace is
+/// fourteen rather than one. `BLANK` is the zero value: it is what you get
+/// when a rank is asked for and none is there.
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub enum Rank {
+    ACE = 14,
+    KING = 13,
+    QUEEN = 12,
+    JACK = 11,
+    TEN = 10,
+    NINE = 9,
+    EIGHT = 8,
+    SEVEN = 7,
+    SIX = 6,
+    FIVE = 5,
+    FOUR = 4,
+    TREY = 3,
+    DEUCE = 2,
+    #[default]
+    BLANK = 0,
+}
+// bower:end rank
+
+// bower:begin from_char
+// bower:end from_char</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-005-rank-enum</code></span></p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-005-rank-enum/src/lib.rs" title="View full file">💾 <code>src/lib.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-005-rank-enum/src/lib.rs#L2-L2" title="View source">L2–L2</a> · step 005 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-005-rank-enum" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-005-rank-enum" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">pub mod rank;</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-005-rank-enum</code></span></p>
+<p>A module that nothing declares is never compiled, so the declaration and the
+file it points at belong in the same commit.</p>
+<p>The names are shouted — <code>ACE</code>, not <code>Ace</code>. That is a break with Rust's usual
+style, and you would expect <code>non_camel_case_types</code> to complain. It does not:
+that lint stays quiet for a name that is already entirely uppercase, and clippy
+at its most pedantic has nothing to add either. A style rule you assumed was
+enforced turns out not to be, which is worth knowing before you lean on it.</p>
+<h2 id="the-match-that-would-not-compile"><a class="header" href="#the-match-that-would-not-compile">The match that would not compile</a></h2>
+<p>Now the interesting part. A rank should be constructible from the character that
+names it, so that <code>'K'</code> becomes <code>Rank::KING</code>. The obvious way to write that is a
+<code>match</code>, and the obvious <code>match</code> is wrong.</p>
+<p><a id="step-from-char-broken"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-006-from-char-broken/src/rank.rs" title="View full file">💾 <code>src/rank.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-006-from-char-broken/src/rank.rs#L25-L43" title="View source">L25–L43</a> · step 006 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-006-from-char-broken" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-006-from-char-broken" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">impl From&lt;char&gt; for Rank {
+    fn from(c: char) -&gt; Self {
+        match c {
+            'A' | 'a' =&gt; Rank::ACE,
+            'K' | 'k' =&gt; Rank::KING,
+            'Q' | 'q' =&gt; Rank::QUEEN,
+            'J' | 'j' =&gt; Rank::JACK,
+            'T' | 't' | '0' =&gt; Rank::TEN,
+            '9' =&gt; Rank::NINE,
+            '8' =&gt; Rank::EIGHT,
+            '7' =&gt; Rank::SEVEN,
+            '6' =&gt; Rank::SIX,
+            '5' =&gt; Rank::FIVE,
+            '4' =&gt; Rank::FOUR,
+            '3' =&gt; Rank::TREY,
+            '2' =&gt; Rank::DEUCE,
+        }
+    }
+}</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-006-from-char-broken</code></span></p>
+<p>Every rank is listed. Every card in the deck is covered. The code is still
+rejected, and the message is the lesson:</p>
+<p><span class="step-output"><sub>$ cargo check · step 006 of rust4failures · <a href="https://doc.rust-lang.org/error_codes/E0004.html">E0004</a></sub></span></p>
+<pre><code class="language-text">[...]
+error[E0004]: non-exhaustive patterns: `'\0'..='/'`, `'1'`, `':'..='@'` and 9 more not covered
+[...]
+</code></pre>
+<p><code>char</code> is not "the characters on a playing card". <code>char</code> is every Unicode scalar
+value, and the compiler will not let you pretend otherwise. It is not asking
+what a card is. It is asking what happens when someone hands you a <code>'z'</code>.</p>
+<p><code>expect="compile_fail"</code> on the directive above declares that this step is
+supposed to be rejected. That is a promise the toolchain checks: when Bower
+replays this book it runs <code>cargo check</code> at this step and treats a <em>successful</em>
+build as the error. The failure is not an accident that survived into print. It
+is an asserted fact about this commit.</p>
+<div class="step-exercise">
+<p><strong>Your turn: Make this compile</strong></p>
+<p>The compiler has named every character it is not told about. Each one needs an
+answer — not just the thirteen on a card.</p>
+<ul>
+<li>The smallest fix is one more arm. Which pattern, and what does it return?</li>
+<li>Could <code>'z'</code> be an <em>error</em> instead of a rank? What would <code>from</code> have to
+become for that to be true?</li>
+</ul>
+<p>Fork <a href="https://github.com/abstecker/rust4failures/fork">the repository</a>, then:</p>
+<pre><code class="language-console">git clone https://github.com/abstecker/rust4failures.git   # or your fork
+git checkout step-006-from-char-broken
+cargo check
+</code></pre>
+<p>Green means you did it. The answer is <a href="#step-from-char">the next step</a>.</p>
+</div>
+<h2 id="answering-the-question"><a class="header" href="#answering-the-question">Answering the question</a></h2>
+<p>The compiler asked what happens to a <code>'z'</code>. <code>BLANK</code> is the answer, and the whole
+reason <code>BLANK</code> exists.</p>
+<p><a id="step-from-char"></a></p>
+<details class="step-answer">
+<summary>Show the answer</summary>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-007-from-char/src/rank.rs" title="View full file">💾 <code>src/rank.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-007-from-char/src/rank.rs#L41-L41" title="View source">L41–L41</a> · step 007 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-007-from-char" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-007-from-char" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust"><span class="boring">impl From&lt;char&gt; for Rank {
+</span><span class="boring">    fn from(c: char) -&gt; Self {
+</span><span class="boring">        match c {
+</span><span class="boring">            'A' | 'a' =&gt; Rank::ACE,
+</span><span class="boring">            'K' | 'k' =&gt; Rank::KING,
+</span><span class="boring">            'Q' | 'q' =&gt; Rank::QUEEN,
+</span><span class="boring">            'J' | 'j' =&gt; Rank::JACK,
+</span><span class="boring">            'T' | 't' | '0' =&gt; Rank::TEN,
+</span><span class="boring">            '9' =&gt; Rank::NINE,
+</span><span class="boring">            '8' =&gt; Rank::EIGHT,
+</span><span class="boring">            '7' =&gt; Rank::SEVEN,
+</span><span class="boring">            '6' =&gt; Rank::SIX,
+</span><span class="boring">            '5' =&gt; Rank::FIVE,
+</span><span class="boring">            '4' =&gt; Rank::FOUR,
+</span><span class="boring">            '3' =&gt; Rank::TREY,
+</span><span class="boring">            '2' =&gt; Rank::DEUCE,
+</span>            _ =&gt; Rank::BLANK,
+<span class="boring">        }
+</span><span class="boring">    }
+</span><span class="boring">}</span></code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-007-from-char</code></span></p>
+</details>
+<p>One line. The block above holds the whole function, because the repository needs
+the whole function, but only the new line was printed on the page. That is what
+the <code>bower:show</code> markers do, and they never reach the repository.</p>
+<h2 id="telling-the-heros-story"><a class="header" href="#telling-the-heros-story">Telling the hero's story</a></h2>
+<p>A conversion is a claim about every input, so the tests are about every input.
+Not a representative sample. Every one.</p>
+<p><a id="step-from-char-tested"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-008-from-char-tested/Cargo.toml" title="View full file">💾 <code>Cargo.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-008-from-char-tested/Cargo.toml#L9-L11" title="View source">L9–L11</a> · step 008 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-008-from-char-tested" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-008-from-char-tested" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">[dev-dependencies]
+rstest = "0.23"
+
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-008-from-char-tested</code></span></p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-008-from-char-tested/src/rank.rs" title="View full file">💾 <code>src/rank.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-008-from-char-tested/src/rank.rs#L45-L78" title="View source">L45–L78</a> · step 008 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-008-from-char-tested" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-008-from-char-tested" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">
+#[cfg(test)]
+#[allow(non_snake_case)]
+mod rank_tests {
+    use super::*;
+    use rstest::rstest;
+
+    #[rstest]
+    #[case('A', Rank::ACE)]
+    #[case('a', Rank::ACE)]
+    #[case('K', Rank::KING)]
+    #[case('k', Rank::KING)]
+    #[case('Q', Rank::QUEEN)]
+    #[case('q', Rank::QUEEN)]
+    #[case('J', Rank::JACK)]
+    #[case('j', Rank::JACK)]
+    #[case('T', Rank::TEN)]
+    #[case('t', Rank::TEN)]
+    #[case('0', Rank::TEN)]
+    #[case('9', Rank::NINE)]
+    #[case('8', Rank::EIGHT)]
+    #[case('7', Rank::SEVEN)]
+    #[case('6', Rank::SIX)]
+    #[case('5', Rank::FIVE)]
+    #[case('4', Rank::FOUR)]
+    #[case('3', Rank::TREY)]
+    #[case('2', Rank::DEUCE)]
+    #[case('_', Rank::BLANK)]
+    #[case(' ', Rank::BLANK)]
+    #[case('z', Rank::BLANK)]
+    fn from__char(#[case] input: char, #[case] expected: Rank) {
+        assert_eq!(expected, Rank::from(input));
+    }
+}</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-008-from-char-tested</code></span></p>
+<p>Two conventions worth naming, because they run through the rest of this book.</p>
+<p>The test is called <code>from__char</code>, with two underscores, which is not idiomatic
+Rust and is why the module allows <code>non_snake_case</code>. The doubled underscore reads
+as "the tests for <code>from</code>, the <code>char</code> ones". When a test fails at three in the
+morning, the name should tell you where to stand before you have read a line of
+its body.</p>
+<p>And the cases are exhaustive on purpose — <code>'z'</code> and <code>' '</code> and <code>'_'</code> sit in the
+same list as the ace. The negative cases are not an afterthought bolted on at
+the bottom. They are the reason the list exists at all. The compiler already
+made us answer for them once. The tests hold us to the answer.</p>
+<h2 id="what-is-in-the-repository-now"><a class="header" href="#what-is-in-the-repository-now">What is in the repository now</a></h2>
+<p>Five commits, each one tagged and checkoutable. One of them does not build, and
+that is recorded as a fact rather than hidden as an embarrassment.</p>
+<p>That is the shape of every chapter from here.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="ch02-cicd.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="REJECTED_ch00-introduction.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+
+                    <footer class="page-footer">
+                        <a href="https://github.com/abstecker/rust4failures">https://github.com/abstecker/rust4failures</a>
+                    </footer>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="ch02-cicd.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="REJECTED_ch00-introduction.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

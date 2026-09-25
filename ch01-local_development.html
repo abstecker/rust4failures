@@ -1,0 +1,440 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Local Development - Rust for Failures</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="How controlled failing is the way to build solid systems.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/step-meta.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust for Failures</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="laser-swords"><a class="header" href="#laser-swords">Laser Swords</a></h1>
+<p>One of my favorite aspect of Star Wars lore is the relationship between a Jedi, and their light saber.
+The highest compliment Darth Vader could give to his son was
+<a href="https://www.youtube.com/watch?v=WDnoczxzQyg">this simple statement of fact</a>: "I see you have constructed a new light
+saber." Their tools were sacred. Building them, mastering them was a rite of passage... a matter of life and death.</p>
+<p>Mastery is the relationship between a person and their tools. For my mother's father, who
+helped put the first man on the moon, it was his protractor, compass and slide rule. For my father's
+father, who was a card shark, master salesman, state senator, and mob researcher, it was a deck of cards, his mastery
+of cross referencing media stories long before the internet, and his ability to make you feel like the most important
+person in the room.</p>
+<p><del>How rarely do we think about the consequences of our creations from that perspective.? We are divorced from the
+frustrated single mother just trying to schedule a doctor's appointment for her child, or the family trusting
+the "autonomous" driving software to take them home safely. We live in the age of disruption... the golden age of grift.
+The software written by the giants before us in the mainframes of our global financial systems still powers the world.
+Their creators aren't billionaries because their created a tool to look at pictures of cats on a computer, or suckered
+states into giving them carbon credits for their gas powered "climate saving" electric vehicles, and yet every single
+cent of these "titans" of silicon valley owns their fortunes to those before them that built the digital highways
+that enable their hubris. They are the ultimate "welfare queens" hoovering up every last cent of capital on the
+planet.</del></p>
+<p><del>The man who invented the spreadsheet mainly got a footnote on wikipedia for his creation
+of the single most utilitarian software application of all time.</del></p>
+<p>In starting this journey together, I am going to share my love of the craft. I want to show you how the tools  of
+our chosen path are the foundation that underpins everything. You can chose the path of our age, and let the coding
+agents do the work for you. They will leave you weak; another clone in a vaste army of replacable clones that cant hit
+the side of a barn, let alone rescue a princess, and are only their to make the powerful project the illusion of strength.
+Cannon fodder in a world where humanity's value towards humanity has never been lower.</p>
+<p>Yet while it feels like everyone is telling you to cut corners, to get rich quick, to make that bet on the stars, the
+value of craft has never been higher. You see, the secret to beating the odds in a market based world, you need to
+clock where everyone is headed, and go in the opposite direction.</p>
+<p>I'm not advocating that you ignore the chaotic innovations that are generative pre-trained transformers like Code
+Claudette and Chat Gipity. What I am advocating is that you don't become their bitch. If you don't understand
+the underlying why of the droids you're having do your bidding, it's you that's the droid. Replaceable. Expendible.</p>
+<p><del>When I interview candidates for jobs, it frustrates my colleges from HR, and also many of my more tech savy
+coworkers. I look at their resume, and simply ask them about their tool stacks. I see you're a Java developer.
+How do you test your code? Unit? Which version do you prefer? Angular and React. Why would you recommend one
+over the other to a client? What Python package manager is your preference? It's amazing how quickly you can
+tell that the light saber they are presenting as their own is borrowed. Every once in a very rare while do you
+get to have a real indepth discussion about</del></p>
+<h1 id="the-first-perspective"><a class="header" href="#the-first-perspective">The First Perspective</a></h1>
+<p>When I meditate on systems, of the the first ways I try to visualize them is through perspectives. A bank through
+customers, tellers, and payment processors; a</p>
+<p>If it's a bank, it's through customers, and bank tellers, and payment processors, and regulators, and a miriad number of
+other systems that interact with it.</p>
+<p>One of the reasons I
+like poker so much as the foundational domain for this work is that it has all of the perspectives
+spelled out plainly if you care to notice.</p>
+<p>While there are perspectives to the domain we will be working with, there are also perspectives
+in software systems. We build things that run on servers. Those servers are interacted with by
+clients. Those servers are monitored by platforms and engineers. The data they create, process,
+and use are stored in databases.</p>
+<p>None of those perspectives matter at all without the first perspective: you. That means being able
+to run code and develop it. Here's my setup:</p>
+<ul>
+<li>macOS 26.7 on Apple Silicon</li>
+<li><a href="https://ohmyz.sh/">Oh My Zsh</a></li>
+<li><a href="https://www.jetbrains.com/rust/">JetBrains RustRover</a>, <a href="https://code.visualstudio.com/">VSCode</a> &amp; <a href="https://neovim.io/">Neovim</a></li>
+<li><a href="https://rustup.rs/">Rustup</a> &amp; <a href="https://doc.rust-lang.org/cargo/">Cargo</a></li>
+</ul>
+<h2 id="lets-go"><a class="header" href="#lets-go">Let's go</a></h2>
+<p>First thing we're going to do is create a new Rust project. One of the things that I really love about
+the language is how easy they make it to manage projects. Languages like Python are a hellscape.
+<a href="https://docs.astral.sh/uv/">Uv</a>, <a href="https://python-poetry.org/">Poetry</a>,
+<a href="https://hatch.pypa.io/latest/">Hatch</a>, <a href="https://pdm-project.org/en/latest/">PDM</a>,
+<a href="https://pip.pypa.io/en/stable/">pip</a>; gang, I love ya, but come on. I just got myself acclimated to
+Poetry when uv became all the rage.</p>
+<p>Rust removed all the uncertainty. Install Rust with <a href="https://rustup.rs/">Rustup</a>. Manage your projects
+with <a href="https://doc.rust-lang.org/cargo/">Cargo</a>.</p>
+<pre><code class="language-shell">cargo new rust4failures --lib
+</code></pre>
+<p>First off, you'll notice that we're using the <a href="https://doc.rust-lang.org/cargo/commands/cargo-new.html#option-cargo-new---lib">lib flag</a>.
+By default, <code>cargo</code> will create a repo with a main file, but when I am doing domain exploration like
+this, I like to start off with a library that I can use in different contexts.</p>
+<p>Here's what we've got so far:</p>
+<p><a id="step-cargo-init"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/Cargo.toml" title="View full file">💾 <code>Cargo.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/Cargo.toml#L1-L6" title="View source">L1–L6</a> · step 001 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-001-cargo-init" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-001-cargo-init" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">[package]
+name = "rust4failures"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-001-cargo-init</code></span></p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/.gitignore" title="View full file">💾 <code>.gitignore</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/.gitignore#L1-L1" title="View source">L1–L1</a> · step 001 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-001-cargo-init" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-001-cargo-init" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-shell">/target
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-001-cargo-init</code></span></p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/src/lib.rs" title="View full file">💾 <code>src/lib.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/src/lib.rs#L1-L14" title="View source">L1–L14</a> · step 001 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-001-cargo-init" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-001-cargo-init" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">pub fn add(left: u64, right: u64) -&gt; u64 {
+    left + right
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let result = add(2, 2);
+        assert_eq!(result, 4);
+    }
+}</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-001-cargo-init</code></span></p>
+<p>Now that we have the project initialized, let's add some customizations to, shall we say, "harden" things.</p>
+<h2 id="rust-toolchaintoml"><a class="header" href="#rust-toolchaintoml">rust-toolchain.toml</a></h2>
+<p>First thing we're going to do is add a new file to the repo: the
+<a href="https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file">rustup toolchain file</a>:</p>
+<p><a id="step-clippy-pendantic"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-002-clippy-pendantic/rust-toolchain.toml" title="View full file">💾 <code>rust-toolchain.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-002-clippy-pendantic/rust-toolchain.toml#L1-L3" title="View source">L1–L3</a> · step 002 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-002-clippy-pendantic" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-002-clippy-pendantic" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">[toolchain]
+channel = "1.94.1"
+components = ["clippy", "rustfmt"]
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-002-clippy-pendantic</code></span></p>
+<h5 id="release-channel"><a class="header" href="#release-channel">Release Channel</a></h5>
+<p>Rather than setting <code>channel</code> to one of the release channels of
+<a href="https://doc.rust-lang.org/book/appendix-07-nightly-rust.html#choo-choo-release-channels-and-riding-the-trains">stable, beta, or nightly</a>,
+we are going to specify an exact version of the toolchain. This is because</p>
+<ol>
+<li>Later on, when we add linting, new lints can get added, and we don't want to accidentally break the build.</li>
+<li>It's a trauma response to having one too many times where a slight difference in versions of a language created brutal nasty bugs.</li>
+</ol>
+<h5 id="components"><a class="header" href="#components">Components</a></h5>
+<p>Next, we're adding two rustup components that are essential to my Rust development.</p>
+<h6 id="rustfmt"><a class="header" href="#rustfmt">rustfmt</a></h6>
+<p>Having solid consistent formatting will save you so much time dealing with pull requests when
+you have teams of more than one developers. While I love to listen to developers debate about
+<a href="https://www.youtube.com/watch?v=oRva7UxGQDw">tabs vs. spaces</a>, my personal opinion is that
+I don't give a shit. Pick one and move on.</p>
+<p>Luckily, Rust makes all that drama go away with <a href="https://rust-lang.github.io/rustfmt/?version=v1.10.0&amp;search=">rustfmt</a>.</p>
+<h6 id="clippy"><a class="header" href="#clippy">clippy</a></h6>
+<h2 id="cargotoml"><a class="header" href="#cargotoml">Cargo.toml</a></h2>
+<h6 id="linting"><a class="header" href="#linting">Linting</a></h6>
+<p>Rust's <a href="https://doc.rust-lang.org/clippy/index.html">Clippy linter</a> is the best in the business. And
+since I'm insane, I like to <a href="https://en.wikipedia.org/wiki/Up_to_eleven">dial it up to 11</a> with the
+<a href="https://doc.rust-lang.org/clippy/lints.html#pedantic">pedantic setting</a>.
+<img src="images/Spinal_Tap_-_Up_to_Eleven.jpg" alt="Spinal_Tap_-_Up_to_Eleven.jpg" /></p>
+<p>To install it simply run <code>rustup component add clippy</code>.</p>
+<p>Here's our updated <code>Cargo.toml</code>:</p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-002-clippy-pendantic/Cargo.toml" title="View full file">💾 <code>Cargo.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-002-clippy-pendantic/Cargo.toml#L1-L13" title="View source">L1–L13</a> · step 002 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-002-clippy-pendantic" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-002-clippy-pendantic" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">[package]
+name = "rust4failures"
+version = "0.1.0"
+rust-version = "1.94.1"
+edition = "2024"
+
+[dependencies]
+
+# bower:begin dev-dependencies
+# bower:end dev-dependencies
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+expect_used = "warn"
+unwrap_used = "warn"
+upper_case_acronyms = "allow"
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-002-clippy-pendantic</code></span></p>
+<h2 id="rust-version"><a class="header" href="#rust-version">Rust Version</a></h2>
+<p>When I started working on this project, lints were set at the top of the primary file in the project, like this:</p>
+<pre><code class="language-rust">#![warn(clippy::pedantic)]</code></pre>
+<p>Since Rust 1.74.0, the preferred method of setting lints is in the project's <code>Cargo.toml</code> file. One big benefit
+of this is that applies to all of the crates in the project, if you have more than one.</p>
+<p>Let's break down the lint settings.</p>
+<h3 id="pedantic-linting"><a class="header" href="#pedantic-linting">Pedantic Linting</a></h3>
+<p>First off, the pedantic lint. Here's what the <a href="https://doc.rust-lang.org/clippy/lints.html#pedantic">clippy docs</a> says about it:</p>
+<blockquote>
+<p>This lint group is for Clippy power users that want an in depth check of their code.</p>
+</blockquote>
+<p>Yes! I'm a power user 💪! Let's go!</p>
+<p>The reason I've set <code>priority = -1</code> is to make sure that these lints go first, so that if I override any of them, such
+as <code>upper_case_acronyms</code>, I am sure that my settings hold. Since the linting doesn't ensure a specific order without
+a priority setting, this is how you lock it in.</p>
+<h3 id="upper-case-acronyms"><a class="header" href="#upper-case-acronyms">Upper Case Acronyms</a></h3>
+<p>This is a selfish stylistic thing with me. I just like the look of <code>Card::SIX_SPADES, Card::SEVEN_SPADES</code> a lot more
+than <code>Card::SixSpades, Card::SevenSpades</code>. Maybe that's the old C programmer in me.</p>
+<h3 id="expect-and-unwrap"><a class="header" href="#expect-and-unwrap">Expect and Unwrap</a></h3>
+<p>Finally, this is probably the most important Rust lint that you an set, and TBH, I am surprised that it isn't a part
+of the pedantic lints: <code>expect_used</code> and <code>unwrap_used</code>. Here's why:</p>
+<p>On <a href="https://blog.cloudflare.com/18-november-2025-outage/">November 18, 2025 Cloudflare's engineering team</a> released the
+following code update:</p>
+<pre><code class="language-rust">/// Fetch edge features based on `input` struct into [`Features`] buffer.
+pub fn fetch_features(
+    &amp;mut self,
+    input: &amp;dyn BotsInput,
+    features: &amp;mut Features,
+) -&gt; Result&lt;(), (ErrorFlags, i32)&gt; {
+    // update features checksum (lower 32 bits) and copy edge feature names
+    features.checksum &amp;= 0xFFFF_FFFF_0000_0000;
+    features.checksum |= u64::from(self.config.checksum);
+    let (feature_values, _) = features
+        .append_with_names(&amp;self.config.feature_names)
+        .unwrap();</code></pre>
+<p>It brought down a significant portion of the internet. Can you spot why? If you're like me, as soon as you looked over
+this code you let out a cackle of pure glee. <em>Nooooooo, not that?!!!!</em></p>
+<hr />
+<p>See, unwrap() has this wonderfully nasty habit of crashing your programs when something returns <code>Err</code> or <code>None</code>. This
+is why you never ever ever ever use <code>unwrap()</code> like this and why as soon as I saw this error, and went through all
+my rust libraries and made sure there weren't any of them hiding in my code.</p>
+<p>TBH, whomever wrote this code is a real boss. I know they're probably really embarassed by it, but it takes a real king
+to bring down the internet with a single line of code. I remember the time I DDOSed my own startup when I had our email
+servers email me whenever an error was seen on the site.</p>
+<p>Failure is a gift, and this example didn't just teach the coder a valuable lesson, it taught an entire planet of Rust
+developers, while giving us all a good laugh.</p>
+<p>I do have one exception to this lint: I don't enforce it in tests. I want my bad tests to fail hard, and I want it to
+be as easy as possible to get the the meat of what we are testing.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="prelude/ch00c-hell_in_a_cell.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="ch02-cicd.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+
+                    <footer class="page-footer">
+                        <a href="https://github.com/abstecker/rust4failures">https://github.com/abstecker/rust4failures</a>
+                    </footer>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="prelude/ch00c-hell_in_a_cell.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="ch02-cicd.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

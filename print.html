@@ -1,0 +1,1346 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Rust for Failures</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="How controlled failing is the way to build solid systems.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/step-meta.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust for Failures</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="τέλος"><a class="header" href="#τέλος">τέλος</a></h1>
+<p><strong>Thesis:</strong> Genius is complexity manifested from simplicity.</p>
+<p>Why is Beethoven great? Why is his 5th Symphony in c minor his most famous work?<sup class="footnote-reference" id="fr-2-1"><a href="#footnote-2">1</a></sup> A four-note theme, repeated twice. <strong>Dum dum dum dummm! Dum dum dum dummmmmmmm!</strong></p>
+<p>You can hear it in your head. It's like a psychic time machine. It's a sense memory that connects billions of people. Why?</p>
+<p>What tools was Beethoven working with?</p>
+<p>You had the Classical Style. <sup class="footnote-reference" id="fr-1-1"><a href="#footnote-1">2</a></sup> A formal harmonic and rhythmic structure, framed by a selection of contrasting movements honed by decades of tradition, founded by the dances of the royal courts, made alive by an innovative use of instruments to perform the music, served to an audience of the rising European middle class starving for novel forms of entertainment.</p>
+<p>You had the manic Viennese composer/performer, hell-bent to pave his own way regardless of public perception, his isolation magnified by his gradual loss of hearing.</p>
+<p>It couldn't have been the premier. That was a disaster. A barely rehearsed 4-hour-long concert, in the middle of a winter storm. Yet within a few years, it was considered a masterpiece.</p>
+<p><strong>Dum dum dum dummm! Dum dum dum dummmmmmmm!</strong></p>
+<p><img src="prelude/../images/beethovens-5thdadadadumm.jpg" alt="beethovens-5thdadadadumm.jpg" /></p>
+<p>So, what is it?</p>
+<p>The secret to unlocking the pure genius of Beethoven's 5th is right there in the opening.</p>
+<p><img src="prelude/../images/middleground.svg" alt="middleground.svg" /></p>
+<p>It's a ladder. V III IV II. 5 3 4 2 ____. We're in the ke of c minor. Start at the top: G or V. Subtract 2: III or Eb . Go up one: IV or F. Subtract 2 again: II or D.
+It's a formula... X - (2 + 1)...</p>
+<p>Except something is missing. V III IV II... no I. No root of the chord. No home.</p>
+<p>From the start, Beethoven pushes us into this manic journey. Through the movements we travel through an Odyssean struggle to find home...</p>
+<ol>
+<li>Allegro con brio in c minor</li>
+<li>Andante con moto in A♭ major</li>
+<li>Scherzo in c minor</li>
+</ol>
+<p><strong>Da da da dummm! Da da da dummmmmmmm!</strong></p>
+<p>I want to go home. This feeling is infused into the music from the most basic of elements to its
+largest architectural structure. Three movements of struggle, until we reach the end, and what do
+we find?</p>
+<p><img src="prelude/../images/Beethoven_-_Sinfonie_5%2C_4._Satz_Hauptthema.png" alt="Beethoven_-_Sinfonie_5,_4._Satz_Hauptthema.png" /></p>
+<p>The C Major shores of home, beaten over our heads as only Beethoven can do.</p>
+<p>(<em>Is having just watched Christopher Nolan's film adaptation of The Odyssey helping?</em>)</p>
+<p>There is no escaping this. We have reached home. There is no subtlety in how Beethoven sends us the message.
+However, because it's a message of notes instead of words, while it's much harder to grab onto intellectually, it's almost impossible to ignore emotionally.</p>
+<p>Scale up to the sweeping lines, or scale down to the tiniest details, they all serve the greater purpose of the essence of what this piece is about.</p>
+<p>The Ancient Greeks called this Telos<sup class="footnote-reference" id="fr-3-1"><a href="#footnote-3">3</a></sup>: the essence of a thing. My thesis of this book is that
+genius is how elegantly complexity manifests itself from simplicity. Atoms becoming rocket ships.
+Subatomic particles becoming atoms. Chains of chemical information allowing for the creation of an
+infinite variety of life. A simple fungus occupying hundreds of miles.</p>
+<p>Genius is simplicity manifesting into things of great beauty and power.</p>
+<p>You can see the patterns everywhere.</p>
+<p>The haystacks and water lilies of Monet. The urgent offbeat rhythmic drive echoing out across
+millennia until James Brown screams, "take it to the bridge!"<sup class="footnote-reference" id="fr-4-1"><a href="#footnote-4">4</a></sup>
+The <a href="https://www.youtube.com/watch?v=SDfELfpumEE">contrasting call and response</a> of Party and Ustad Nusrat Fateh Ali Khan.
+The slowly accelerating mania of <a href="https://www.youtube.com/watch?v=AnHiAWlrYQc">Lucy and Ethel wrapping chocolates</a>.
+<a href="https://www.youtube.com/watch?v=cZQBvdFboM4">Any guitar solo</a> by Sister Rosetta Tharpe.</p>
+<p>They are the seeds of humanity. The link us across time and space. They are the living magic of
+telepathy and time travel that is consiousness.</p>
+<h2 id="i-thought-this-was-about-fucking-software"><a class="header" href="#i-thought-this-was-about-fucking-software">I thought this was about fucking software</a></h2>
+<p>I maintain that it's the fundamental reason that certain technology companies dominate our world.</p>
+<p>One of the purest examples of this is <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a>
+where a very simple set of rules on a two dimensional grid can create amazing structures.</p>
+<p>Our tech landscape is dominated by titans who were able to translate an elegant technical idea, and
+create planet altering empires out of it.</p>
+<p>Google's genius is in their <a href="https://en.wikipedia.org/wiki/MapReduce">MapReduce</a>. It is the essence of everything they
+create. An idea that takes data, and gives the owner of that data seemingly limitless power to shape and filter. This
+foundation has spawned many applications, more often than not winding up in the
+<a href="https://killedbygoogle.com/">Google Graveyard</a>.<sup class="footnote-reference" id="fr-6-1"><a href="#footnote-6">5</a></sup> The Logos that defines Google's technology foundation doesn't
+necessarily benefit the company's shareholders, and corporations do not have artistic integrity.</p>
+<p>For Facebook, it's the <a href="https://developers.facebook.com/docs/graph-api/">Graph API</a>. Taking your personal information
+and relationships and deconstructing them into into an easily traversable map of information snippets to manipulate
+users, similar to how a virus uses our own building blocks to attack us. Never underestimate a nerd with self
+esteem issues can accomplish when he puts his mind to it. For Beethoven, it was composing
+<a href="https://en.wikipedia.org/wiki/F%C3%BCr_Elise">Für Elise</a>. For Zuckerberg, it's the creation of an endless stream of
+reality warping dystopia machines designed to feed his hunger for endless profits by openly creating a reality that
+farms hate based on <a href="https://www.youtube.com/watch?v=zCvPPaIN5Ew&amp;t=834s">what has been called the "Zuck Curve."</a>.
+(See <a href="https://archive.org/details/a-blueprint-for-content-governance-and-enforcement-facebook">A Blueprint For Content Governance And Enforcement Facebook</a>.)</p>
+<p>Genius does not select its path... genius doesn't have an <a href="https://en.wikipedia.org/wiki/Alignment_(role-playing_games)">alignment</a>... but it must have elegance. The
+problem with these technologies is that they are fueled by
+<a href="https://www.youtube.com/watch?v=4UPDUpjkHg0">turning their customers into their product</a>, creating a kind of toxic
+feedback loop that magnifies the worse in human interaction.</p>
+<p>For me, programming is a creative, artistic practice. When I code, I am trying to find that sweet spot in a system where
+its fundamental elements can flower like this. I know, this is a quest of folly, but I find that it creates systems that
+are much easier to build and maintain.</p>
+<h2 id="the-power-of-one"><a class="header" href="#the-power-of-one">The Power of One</a></h2>
+<p>This book is an exploration of the self, and how it explores and creates. It is a testament to my love of
+the creative side of programming.</p>
+<p>One of the sayings I coined was <em>an orchestra never wrote a symphony.</em> I believe that in software just
+as much as I do in music. There is a beautiful harmony in people coming together to manifest someone's
+dream. But let's not forget that the dreamers need space to dream. It is the partnership that defines
+civilization. The one inspiring the many, and the many creating the space for many ones.</p>
+<p>I am not saying I am a genius. A great friend once said to me, "you are a seeker." A truer word about me was never said.
+I seek a world that gives space to every seeker, and a platform for each to have their moments. This does not place us
+above others, just acknowledges the power of creation while bowing in eternal gratitude to the collective coming together
+to build those visions. Not for profit of self, but for upliftingof all.</p>
+<hr>
+<ol class="footnote-definition"><li id="footnote-2">
+<p>https://en.wikipedia.org/wiki/Symphony_No.<em>5</em>(Beethoven) <a href="#fr-2-1">↩</a></p>
+</li>
+<li id="footnote-1">
+<p>https://en.wikipedia.org/wiki/The_Classical_Style <a href="#fr-1-1">↩</a></p>
+</li>
+<li id="footnote-3">
+<p>https://en.wikipedia.org/wiki/Telos <a href="#fr-3-1">↩</a></p>
+</li>
+<li id="footnote-4">
+<p>https://www.youtube.com/watch?v=zo80gXXIH_o <a href="#fr-4-1">↩</a></p>
+</li>
+<li id="footnote-6">
+<p>My favorite examples of this are <a href="https://en.wikipedia.org/wiki/Google_Wave">Google Wave</a> and <a href="https://en.wikipedia.org/wiki/Orkut">Orkut</a>. I had a friend who gave me early access to Orkut where I setup a community for the great <a href="https://en.wikipedia.org/wiki/Nusrat_Fateh_Ali_Khan">Nusrat Fateh Ali Khan</a>, where I was quickly corrected that the respectful way to say his name is <a href="https://en.wikipedia.org/wiki/Ustad">Ustad</a> Nusrat Fateh Ali Khan. The issue with Wave was farly obvious, when you think about it, since it's a technology that empowers users to build applications allowing them directly cowork, without the gates of the Google panopticon. Soon after it was pulled you could see the features showing up in their office applications. <a href="#fr-6-1">↩</a></p>
+</li>
+</ol><div style="break-before: page; page-break-before: always;"></div><h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<blockquote>
+<p>Motto: Failure is a gift.</p>
+</blockquote>
+<p>I was 20 years old when the motor home pulled into the parking lot of the 7-11 when I was
+working solo at the
+<a href="https://www.google.com/maps/place/1010+Hillside+Blvd,+Daly+City,+CA+94014/@37.6897939,-122.4612692,54a,75y,219.32h,82.81t/data=!3m7!1e1!3m5!1sqwK8hlHt7G9vtZKahcsCIg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D7.189452548127392%26panoid%3DqwK8hlHt7G9vtZKahcsCIg%26yaw%3D219.31739032217254!7i16384!8i8192!4m15!1m8!3m7!1s0x808f7c0efaf5a78b:0x9cad5aa0d03c3ca1!2s1010+Hillside+Blvd,+Daly+City,+CA+94014!3b1!8m2!3d37.689577!4d-122.4615136!16s%2Fg%2F11b8v6x6dc!3m5!1s0x808f7c0efaf5a78b:0x9cad5aa0d03c3ca1!8m2!3d37.689577!4d-122.4615136!16s%2Fg%2F11b8v6x6dc?entry=ttu&amp;g_ep=EgoyMDI2MDkwOC4wIKXMDSoASAFQAw%3D%3D">Colma 7-11</a>.
+A man stepped out, and walked into the store, headed over to the coffee pots and poured himself a cup.
+Approaching the register, he extended out his hand to me.</p>
+<p>"I just wanted to thank you."</p>
+<p>That's when I recognized him. A year before, he was pointing a gun at my face, robbing the store of
+$202 dollars. The police caught him a few hours later with the thanks of their K-9 unit.</p>
+<p>It was because of me and the Daly City PD that he turned his entire light around. Now he was
+working as a cook in an amazing SF restaurant, and his entire life was for the better. I took his hand,
+laughed, and said "you're welcome. That will be $2."</p>
+<p>Failure is a gift, if you learn from it.</p>
+<p>Meanwhile, I was still the same loser I was for the last two years, making shit wages, stocking
+shelves, mopping the floors, and making sure that the coffee was always fresh. I kept working
+there for another year, when a man with six bullets in him, on probation, walked into
+the store, and pointed a semi-automatic pistol at my face as his 16 year old partner kept watch
+for police.</p>
+<p>Failure is a gift, if you learn from it.</p>
+<p>Stealing a pack of Swisher Sweets and the $247 dollars from the register, they rushed out of the
+door and drove away in a stolen car, which they crashed into the Balboa Bart Station shortly
+thereafter where they were quickly arrested.</p>
+<p>As I stared down the barrel of the rusty gun, I didn't see my life flash before my eyes. What I did see surprised me.
+You see, for the last few years I had been dating this girl who was a vegetarian. So I decided to be a vegitarian
+too. At that moment, however, I had one thought in my mind: <em>man, I really want a pepperoni pizza.</em> So that day, I
+went out for lunch with my friend Irving, and stopped being a vegetarian. It would take me another 10 years to get
+my shit together.</p>
+<p>Failure is a gift, if you learn from it.</p>
+<p>The thing is, I've been a failure all my life. I’ve dropped out of college three times.
+I graduated from high school with a D average. I’ve lost every professional French Horn audition
+I’ve ever taken. I spent a time homeless crashing on friends couches when they would let me, and
+sleeping on Bart trains, parks and the San Francisco Symphony's Davies Symphony Hall musician's lounge.
+(I knew the security guards because I used to play in the SF Symphony Youth Orchestra. Always be nice to the people
+who control the doors.)</p>
+<p>It would take me about 10 years to finally start figure it out.</p>
+<p>My hobby Christmas Songbook website and gotten me a $350 bill from my ISP. At the time I was making $7 an hour as a
+walking messenger in SF. I was fucked.</p>
+<p>Except, it turns out I wasn't. The reason I got the spike in gtraffic was because I was written up and the prestigious
+Yahoo! magazine, which in turn was copied in the New York Times. Within a year, I was working for a startup called
+XOOM.com. 28 years later I am still programming.</p>
+<p>Turns out, that failure fast, and failing with intent creates learning systems that get stronger and they grow.
+Controlled failing is one of a developers greatest superpower.</p>
+<p>I am proof positive of this. I don't have any degrees; I am completely self taught; and I am an old fuck still employed
+through three market crashes.</p>
+<p>I would argue that failure is the single most powerful force in the greatest super power on the planet. The big money
+is on failing big. Why use your profits to improve customer satisfaction
+in your airline, when you can instead give yourself and your investor pals more cash with stock
+buybacks? Why earn profits when you can make money promising the moon as long as number go up and
+you get while the getting is good? Why ensure the best returns for your customers, when you can
+instead create dark money pools making sure that you always take the cream off the top first? Why
+represent people, when you can lock in a job for life and get hot stock tips and free gigs for
+your fam just by not getting anything actually done?</p>
+<p>Failure is a superpower. Some choose to use it for evil, and are incredibly wealthy. Others choose to use it for good,
+and are incredibly poor in comparison. I choose to use it for good, building systems that I am always proud to walk
+away from. Stupid me.</p>
+<h2 id="who-am-i"><a class="header" href="#who-am-i">Who am I?</a></h2>
+<p>I'm Christoph. I'm a professional software developer who has been working for 28 years. I got my
+start in the SF dot.com boom, and went on to live through three tech sector crashes. I'm 60 years
+old, and can still walk onto any team coding in any language and deliver value by using the techniques
+that I will be cover in this book. My work is in cars and planes and banks and electric charging
+stations and government agencies that I am not allowed to talk about, in languages that you
+probably hate, like Java and PHP, and .NET and JavaScript and Ruby and Python and C++ and
+Kotlin, and TypeScript and C. No, I didn't make bank off of one of the startups that I worked for,
+and TBH, I got off pretty good walking away with nothing, given how fucked several of my friends got
+from companies where their contributions were critical. I did make a lot of fucking money for a lot of
+companies, and always by doing work that I was proud of. I try to be a force multiplier. Find gaps...
+automate away the gaps... repeat until no longer needed... walk away smiling. I've worked with dozens
+of developers who could code me under the table, and I'm greatful for how much I've learned from them.
+But there's only one Christoph, and I'm Christoph, mother-fucker.</p>
+<h2 id="why-poker"><a class="header" href="#why-poker">Why Poker?</a></h2>
+<p>Poker is a nice fixed domain, with clear rules that allow us to focus on code instead of research. It's a fun way to
+visually show code in action. Plus,
+I like playing and watching poker, and it's fun. I an interested in what they call Game Theory
+Optimal (GTO) style of play. Instead of paying hundreds of dollars for a one of those pro solver tools,
+I thought that it would be more fun to write my own.</p>
+<p>NOTE: Gambling addiction is one of the plagues of our times. I am not a gembler. I just
+like to plunk down a few hundreds every now and then on a tournament. More often, I am
+watching WSOP tournaments and shows on Poker Go. Please be careful. This code is not designed
+to encourage you to gamble.</p>
+<h2 id="why-rust"><a class="header" href="#why-rust">Why Rust?</a></h2>
+<p>TBH, this is a bet. For a long time I've felt like the domain surface of complex software systems is much too wide,
+unorganized, and exposed. Now that we are living through the era of agentic coding solutions, we are seeing
+that risk manifest in real time. Agentic coding systems may not be the best at constructing architectural beauty, but
+they can sure as shit act like a million chaos monkeys. Organizations will have no choice but to tighten up everything.</p>
+<p>When you get right down to it, Rust is a trauma response from the years and years of defects created by other
+languages. I am a firm believer in making problems impossible instead of traditional creating controls to prevent them.
+Rust can create shit systems with the best of them, but by its very design it makes a whole collection of code crimes simply
+impossible to commit.</p>
+<p>Programming languages like JavaScript and Python were never designed to be the source of truth of complex systems.
+Suddenly, the velocity of code change is accelerating exponentially, and languages designed with flexibility in mind
+are seeing that feature being used against them. Anyone maintaining systems now is seeing that effect in real time.
+Security alerts about popular libraries are now a daily occurrence. Agentic coding systems may not be the best at
+constructing architectural beauty, but they can sure as shit act like a million chaos monkeys.</p>
+<p>You see, when I talk abour failing as a skill, it's all about controlled failure.
+Minimizing risk. Python, and other scripting languages like it, are so flexible that the variance they introduce,
+compounded by the velocity of the coding agents that produce it, creates a terrifying cocktail. Add on to that the fact
+that many of the people using these systems have no fucking clue what the code they are creating actually does.</p>
+<p>Rust, combined with disciplined design and technologies like web assembly, offer a way to simplify and organize what
+has been traditionally been a mess, outside of the exhalted chambers of bank mainframe system develoers. Not only do I believe that
+but I intend to prove it.</p>
+<p>That doesn't mean that these languages like Python and JavaScript won't play a supporting role
+in this exercise. One of my favorite returns of investment in the way I have been coding, is how easily I can take my
+core library and wrap it in <a href="https://pypi.org/project/pkcore-py/">Python</a> or
+<a href="https://www.npmjs.com/package/@imperialbower/pkcore">Node.JS</a>. How I can use that same single library and create not
+just <a href="https://github.com/ImperialBower/pkgto-web">one</a>, but several
+<a href="https://github.com/ImperialBower/pkarena0-web">web applications</a>, all using a blob of code that's under 5MBs, and
+working with the same, battle tested library functioning as a single source of truth.</p>
+<h2 id="spoiler-alert"><a class="header" href="#spoiler-alert">SPOILER ALERT</a></h2>
+<p>Here are a few examples of what I am talking about. When I started out on this project, I was curious
+about web assembly. I wanted to build my library, and see how it faired from the command line and maybe
+through a web page. Now, thanks to web assembly, I can create multiple purely client side tools, such
+as a <a href="https://imperialbower.github.io/pkgto-web/">GTO style card combination analyzer</a>,
+and a client based <a href="https://imperialbower.github.io/pkarena0-web/">poker table where you play against eight bots</a>,
+as well as binding it to a <a href="https://pypi.org/project/pkcore-py/">Python</a> or
+<a href="https://www.npmjs.com/package/@imperialbower/pkcore">Node.JS</a> library. These are all built with
+the same foundational codebase. There are many other examples that I have been playing with, including
+a client/server architecture where you can play against various AI bots, and a command line
+terminal client for those old school like me.</p>
+<p>So, come along, as I show you how to turn failing into your superpower. Or don't.
+You're still going to fail. The question is, will you see it as the gift it really is?</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="what-is-this"><a class="header" href="#what-is-this">What Is This?</a></h1>
+<p>This is a mining expedition. One of the things I like to do as a programmer is to
+find a problem area, and explore it; explore the way the data lends itself to
+patterns. I call it making the data plastic.</p>
+<p>When I refer to the term <em>plastic</em>, I am using the ol' timey definition of the
+word... what Merrian-Webster has relegated to the 3a and 3b spots in their
+<a href="https://www.merriam-webster.com/dictionary/plastic">definition</a>.</p>
+<pre><code class="language-txt">plastic - adjective
+   3a : capable of being molded or modeled
+   3b : capable of adapting to varying conditions : pliable
+</code></pre>
+<p>I wanted to show my readers a window into how I explore and work with systems from the ground up.
+It's rare that you get the luxury of exploring the fundamental domain of a problem space. It's one
+of the attractions of working with startups. Generally, you come into something that is so far
+entrenched that you feel more like the guy at the end of the circus parade cleaning up shit, than
+someone "innovating."</p>
+<p>The work that makes up the code in this book started as a way for me to learn Rust by exploring
+a domain space that interests me: poker; specifically what they call the GTO of Game Theory Optimal
+style of poker poker play. Generally, the way to explore this is to purchase what they call a poker
+solver. It helps you with the doing the calculations around the style, allowing you to get familiar
+with the math, and develop your own style of play around it.</p>
+<p>Fuck that. Let's write our own.</p>
+<p>The original goal of this book was to allow programmers at various levels to experience what it was like
+to pair with me. Pair programming was something that I was introduced to at a company called Pilar
+Technology in Columbus, Ohio. It allowed me to side along side some amazing developers and experience
+how they looked at programming. Each different... each unique... each valid.</p>
+<p>I quickly discovered that my own style is radically different than anyone else that I have ever worked
+with. It's a style born out of being raised by a single genius, on the spectrum lesbian mother. I call it
+the short circuit, or as a <a href="https://www.youtube.com/watch?v=un3NkWnHl9Q">wise philosopher once called it</a>,
+"flip mode. Flip mode's the greatest."</p>
+<p>It's hard to explain how it works. It's mainly about how it's been my experience that stakeholders have
+a very narrow grasp of how the systems they want to build would actually work. How the state would
+be leveraged in a way to bend to their will. They think they have all the answers, whereas in fact,
+they've come across more often than not as toxic idiots. Are news is now filled with the results of
+their hubris. Always bet on stupid.</p>
+<p>That's why I say that people don't know what they want until they see it. It's why one of my core values
+as a developer is what I call "demo on demand." That we should ready at any time and any place to show
+our work.</p>
+<h2 id="enter-the-clankers"><a class="header" href="#enter-the-clankers">Enter the Clankers</a></h2>
+<p>One note, about five years into this little exercise, agentic coding agents started entering the
+playing field. I started out playing with GitHub's Copilot. I found it to be mainly good at helping
+to fill out long, repetative code sections such as
+<a href="https://github.com/ImperialBower/pkcore/blob/78a45ab121e05221ac2ede3d1ea95f4260aa4e2f/src/macros.rs#L55">this macro to help create hand ranges</a>.
+It was amusing watching it create code snippets, only for the Rust compiler to point out through
+linting how the code had issues. Generally, this is because Rust is in very active development,
+and LLMs are months if not years behind things.</p>
+<p>Later on, I was introduced to Claude Code at work, and decided to explore its impact on how I programmed
+as a veteran developer. It's allowed to to establish some defensive techniques around the technology,
+that have allowed me to leverage the technologies in ways that I find interesting, but also concerning...
+feelings that I will be exploring as a part of our work through this book.</p>
+<p>A big plus IMNSHO in all this is that I had spent years establishing the core of this project long before
+I had ever heard of LLMs. This has given me a foundation that acts as a counterbalance to the
+intentionally designed pull that these tools have baked into them, to make you dependent on their
+utility. Back when I worked at the 7-11, I called this the "curse of convenience." It is one of the
+most dangerous aspects of capitalism, and one that I at least strive to be aware of, even as my lazy
+ass has a delicious <a href="https://www.thetasteoftuscany.com/">Taste of Tuscany</a> calzone delivered to my house.</p>
+<h2 id="creating-the-developers-hans-device"><a class="header" href="#creating-the-developers-hans-device">Creating the Developer's HANS Device</a></h2>
+<p>As you will soon learn following along with me, I test the shit out of my code. I test it one way, and
+then another way, and even then I test it some more. Agentic coding tools have given us velosity, but at
+the cost of safety. We're moving at hundreds of miles an hours faster than every before without a care in
+the world, unprepared for when our stupid asses fly through the window of our top of the line racing car.
+Just as it did in the automotive field, the coding field will only discover the path forward through
+a lot of pain and deaths. The problem is, the fucktards creating these systems don't give a flying fuck
+about how many people get fucked from their fuckery. That's the job for idealistic fools like you and
+me, who try to find a path forward, whilst dodging the slings and arrows of life. It took for a lot of
+race car drivers getting brain injuries before Dr. Robert Hubbard created the
+<a href="https://en.wikipedia.org/wiki/HANS_device">HANS device</a>. It's going
+to take a lot of stupid for us to figure out to same.</p>
+<p>All I can say is, the clankers will gladly help you fuck yourself, and will also gladly help you unfuck
+yourself, but they will not help you avoid getting fucked in the first place. That's up to us,
+mother-fucker.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="hell-in-a-cell"><a class="header" href="#hell-in-a-cell">Hell in a Cell</a></h1>
+<h2 id="tldr"><a class="header" href="#tldr">TL;DR</a></h2>
+<p>I hate initial setup chapters in coding books. Just do the
+<a href="https://github.com/devplaybooks/rust_worlds_simplest_kata">The World's Simplest Kata</a> to make sure you have everything setup correctly.</p>
+<hr />
+<h1 id="editor-this-all-may-suck-could-just-leave-the-top-part"><a class="header" href="#editor-this-all-may-suck-could-just-leave-the-top-part">EDITOR: This all may suck. Could just leave the top part.</a></h1>
+<hr />
+<p>ANNOUNCER:</p>
+<blockquote>
+<p><em>Two programmers walk in, one walks out. Who will triumph...</em></p>
+</blockquote>
+<p><code>     </code>💥💥EXPLOSIONS💥💥</br>
+<code>     </code>QUEUE <a href="https://www.youtube.com/watch?v=_YYmfM2TfUA">Gonna Fly Now aka Rocky Theme</a></p>
+<blockquote>
+<p><em>the naive young developer trying to thrive in our cruel technocratic society...</em></p>
+</blockquote>
+<p><code>     </code>💥💥LASER SHOW💥💥</br>
+<code>     </code>QUEUE <a href="https://youtu.be/2IPAOxrH7Ro?t=86">Flight of the Concords' Robots</a></p>
+<blockquote>
+<p><em>or Broboto, the Soulless Savage AI Robot, trained by Silicon Valley, hellbent on terminating anyone who dares to clutch a keyboard?</em></p>
+</blockquote>
+<p>Sure, every sociopathic CEO on the planet is trying to replace you with AI, but can they? These programming streets are hard, and the defects don't play by <a href="https://en.wikipedia.org/wiki/Marquess_of_Queensberry_Rules">Marquess of Queensberry Rules</a>. Right now hundreds of thousands of clueless users and vapid script kiddies are foaming at the mouth to do incredibly stupid and cringeworthy things to any program released into the wild.</p>
+<p>Are you going to run back to mommy's safe warehouse job or are you going to step to it and take on the AI horde? Do you have what it takes? Do you have the intestinal fortitude to enter the</p>
+<pre><code class="language-txt">██╗  ██╗███████╗██╗     ██╗         ██╗███╗   ██╗     █████╗ 
+██║  ██║██╔════╝██║     ██║         ██║████╗  ██║    ██╔══██╗
+███████║█████╗  ██║     ██║         ██║██╔██╗ ██║    ███████║
+██╔══██║██╔══╝  ██║     ██║         ██║██║╚██╗██║    ██╔══██║
+██║  ██║███████╗███████╗███████╗    ██║██║ ╚████║    ██║  ██║
+╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝    ╚═╝╚═╝  ╚═══╝    ╚═╝  ╚═╝
+                                                             
+ ██████╗███████╗██╗     ██╗   ██████╗                        
+██╔════╝██╔════╝██║     ██║   ╚════██╗                       
+██║     █████╗  ██║     ██║     ▄███╔╝                       
+██║     ██╔══╝  ██║     ██║     ▀▀══╝                        
+╚██████╗███████╗███████╗███████╗██╗                          
+ ╚═════╝╚══════╝╚══════╝╚══════╝╚═╝                             
+</code></pre>
+<h2 id="the-cell"><a class="header" href="#the-cell">The Cell</a></h2>
+<p>You and your AI opponent will be locked into a Cell of the <a href="https://www.rust-lang.org/">Rust</a> programming language. Why Rust? Because it's difficult, and cruel, and the programmers who code in it are all assholes, and naturally, since I am an asshole, it is my favorite language. <em>Seriously, because of it's strict nature it's the perfect antidote to the AI vibe sludge coming out these days.</em></p>
+<p>The problem is simple: Hello, World!. Yes, <a href="https://en.wikipedia.org/wiki/%22Hello,_World!%22_program">Hello, motherfucking World!</a>. The most overused programming exercise on the planet; Beaten to death so hard that it's the turned into the finest McRib worthy <a href="https://en.wikipedia.org/wiki/Pink_slime">pink slime</a>.</p>
+<h3 id="the-opposition"><a class="header" href="#the-opposition">The Opposition</a></h3>
+<p>Your opponent is CoPilot. Yes, CoPilot; Sam Altman's &amp; Satya Nadella's purloined AI love child currently infesting every Microsoft based application it can sink it's binary claws into. <em>Oh my, how did I ever use Notepad before CoPilot? Thank you! Thank you!!! I'll never had to worry about how to end a sentence again!</em></p>
+<p>GitHub has added an adorable new feature: you can now get code reviews from CoPilot. So, I've taken the error littered original version of the <a href="https://github.com/devplaybooks/rust_worlds_simplest_kata">kata</a>, and ran it through a CoPilot code review, to see how well it can do.</p>
+<h2 id="let-us-go"><a class="header" href="#let-us-go">Let us go!</a></h2>
+<p>Here's your mission:</p>
+<ul>
+<li>Fork the  <a href="https://github.com/devplaybooks/rust_worlds_simplest_kata">The World's Simplest Kata</a> repo.</li>
+<li></li>
+<li>Make the <a href="https://github.com/devplaybooks/rust_worlds_simplest_kata/actions">failing GitHub Actions</a> green.</li>
+</ul>
+<hr />
+<p>Here's were you should stop and try to work through it yourself. If you're still having issues
+here's a walkthrough of me getting things to work:</p>
+<p>Step 1: Install Rust</p>
+<p>➔ TL;DR GOTO <a href="https://rustup.rs/">rustup.rs</a>. Do what it says.</p>
+<p>Rust has the best ecosystem for a programming language in the world. If you've banged your head against the wall trying to get a grip on how to manage Python projects, or lost yourself in a sea of gcc compiler flags, Rust will seem like a cool ocean's breeze.</p>
+<ul>
+<li>Install <a href="https://rustup.rs/">rustup</a>.</li>
+<li>run <code>rustup install</code></li>
+</ul>
+<p>You should see something like this:</p>
+<pre><code class="language-shell">$&gt; rustc --version
+rustc 1.97.1 (8bab26f4f 2026-07-14
+</code></pre>
+<h2 id="step-2-fork-it"><a class="header" href="#step-2-fork-it">Step 2: Fork it</a></h2>
+<p>IF you have a github account:
+fork the repo
+enable GitHub Actions for your fork.<sup class="footnote-reference" id="fr-1-1"><a href="#footnote-1">1</a></sup>
+ELSE if <em>brah, I don't mess with those giganto corporations, man</em>:
+download the code onto your machine.</p>
+<h2 id="question-does-it-build"><a class="header" href="#question-does-it-build">Question: Does it build?</a></h2>
+<pre><code class="language-rust">$&gt; cargo build
+`/Users/flubble/src/github.com/devplaybooks/rust_worlds_simplest_kata/Cargo.toml`
+
+Caused by:
+  rust-version 1.72.1 is incompatible with the version (1.85.0) required by the specified edition (2024)</code></pre>
+<p>It's insane how good the Rust compiler is at spelling out exactly what the problem is. The <code>../../../Cargo.toml</code> file says <code>edition = "2024"</code> but the Rist versions is set to <code>1.72.1</code>. Let's bump it up to what we're running, version <code>1.97.1</code>:</p>
+<pre><code class="language-diff">diff --git a/Cargo.toml b/Cargo.toml
+index 7220334..26bb72e 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -3,7 +3,7 @@ name = "worlds_simplest_kata"
+ version = "0.1.2"
+ authors = ["electronicpanopticon &lt;gaoler@electronicpanopticon.com&gt;"]
+ edition = "2024"
+-rust-version = "1.72.1"
++rust-version = "1.97.1"
+ description = "A kata to learn how to fix basic issues with rust code."
+ repository = "https://github.com/devplaybooks/rust_worlds_simplest_kata"
+ license = "GPL-3"
+</code></pre>
+<h3 id="step-4-does-it-build-now"><a class="header" href="#step-4-does-it-build-now">Step 4: Does it build now?</a></h3>
+<p>Let's see how we're doing:</p>
+<pre><code class="language-rust">$&gt; cargo build 
+   Compiling worlds_simplest_kata v0.1.2 (/Users/christoph/src/github.com/abstecker/worlds_simplest_kata_no_actions)
+error[E0308]: mismatched types
+  --&gt; src/lib.rs:23:9
+   |
+22 |     pub fn  hello__world() -&gt; &amp;'static str {
+   |                               ------------ expected `&amp;'static str` because of return type
+23 |         Hello::hello("wirld!".to_string())
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&amp;str`, found `String`
+   |
+help: consider borrowing here
+   |
+23 |         &amp;Hello::hello("wirld!".to_string())
+   |         +
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `worlds_simplest_kata` (lib) due to 1 previous error</code></pre>
+<p>Rust strings still terrify me. I feel like I am a lot better at dealing with them then when I first started out, but still... damn do they call out all of my deficiencies as a developer. My php, perl coding early ass didn't know shit... didn't learn shit... was just making it up as I went along... <em>ASIDE: I still am.</em></p>
+<p>Basically, a <a href="https://doc.rust-lang.org/std/string/struct.String.html">String</a> is is stored in the heap<sup class="footnote-reference" id="fr-2-1"><a href="#footnote-2">2</a></sup> of your program. It's like that extra suitcase you take on a trip so that you can fit in silly nick knacks you collect along your way. A <a href="https://doc.rust-lang.org/std/primitive.str.html">str primitive type</a>, on the other hand, is something that you can borrow, but not buy. It's like that key to the gas station restroom, chained to an old license plate. You can borrow it, but it's not yours.</p>
+<p>In this case, the <code>hello__world</code> function is returning <code>&amp;'static str</code>; what's called a string literal. It's a string that's burned into your program, and will exist unti it ends. It's like that tattoo you got that one night, in that place were no one can see it... you know the one.</p>
+<hr />
+<p>I can see three paths forward. Here's the simplest. I have a static function that's trying to return a static str, that insteads returning the results of a function that returns a String.</p>
+<blockquote>
+<p>Patient: <em>Doc, it hurts when I hold my arm like that.</em>
+Doctor: <em>Well don't hold arm like that.</em></p>
+</blockquote>
+<p>So, let's do what it says:</p>
+<pre><code class="language-rust">pub fn  hello__world() -&gt; &amp;'static str {  
+    "Hello, world!"  
+}</code></pre>
+<p>Now we're returning a pure String literal. Let's see how it does.</p>
+<pre><code class="language-shell">$&gt; cargo build                                                                                                                                             ─╯
+warning: method `hello__world` should have a snake case name
+  --&gt; src/lib.rs:22:13
+   |
+22 |     pub fn  hello__world() -&gt; &amp;'static str {
+   |             ^^^^^^^^^^^^ help: convert the identifier to snake case: `hello_world`
+   |
+   = note: `#[warn(non_snake_case)]` (part of `#[warn(nonstandard_style)]`) on by default
+
+warning: `worlds_simplest_kata` (lib) generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.00s
+</code></pre>
+<p>It builds, but with a warning. First, ret's get rid of that warning, and remove the dunder, or double underscore, from the <code>hello__world()</code> function.</p>
+<blockquote>
+<p>Did you know that a double underscore in some programmering circles is called a dunder? I learned that while attending one of the <a href="http://cohpy.org/">Central Ohio Python User's Group</a> meetings. In python code you will see functions named <a href="https://www.geeksforgeeks.org/python/__init__-in-python/"><strong><strong>init</strong></strong> </a>, and they would call them "dunder inits."</p>
+</blockquote>
+<p>Here's the update to the function that matches the recomentation from error message as close as possible:</p>
+<pre><code class="language-rust">pub fn hello_world() -&gt; &amp;'static str {  
+   "Hello, world!"  
+}</code></pre>
+<p>Let's see how that does.</p>
+<pre><code class="language-bash">$&gt; cargo build
+   Compiling worlds_simplest_kata v0.1.2 (/Users/christoph/src/github.com/devplaybooks/rust_worlds_simplest_kata)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.00s
+</code></pre>
+<p>Nice... it builds fine.</p>
+<pre><code class="language-shell">cargo run
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running `target/debug/worlds_simplest_kata`
+Hello, world!
+</code></pre>
+<p>And it runs without a problem.</p>
+<p>Let's see if the tests are green:</p>
+<pre><code class="language-bash">$&gt; cargo test
+Compiling worlds_simplest_kata v0.1.2 (/Users/christoph/src/github.com/devplaybooks/rust_worlds_simplest_kata)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.15s
+     Running unittests src/lib.rs (target/debug/deps/worlds_simplest_kata-c6a62a2629fcb368)
+
+running 1 test
+test tests::hello_world ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/worlds_simplest_kata-cfecd8ab1322d86e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+</code></pre>
+<p>yes, but...</p>
+<pre><code class="language-bash">   Doc-tests worlds_simplest_kata
+running 1 test
+test src/lib.rs - Hello (line 10) ... FAILED
+failures:
+---- src/lib.rs - Hello (line 10) stdout ----
+Test executable failed (exit status: 101).
+
+stderr:
+
+thread 'main' (876041) panicked at /var/folders/yc/zz4hyvrx0rzc5tdpkjgrkmy00000gn/T/rustdoctestCeSnEA/doctest_bundle_2024.rs:9:1:
+assertion `left == right` failed
+  left: "Hello, everyone."
+ right: "Hello,  everyone!"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+failures:
+    src/lib.rs - Hello (line 10)
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 0.69s; merged doctests compilation took 0.36s
+error: doctest failed, to rerun pass `--doc`
+</code></pre>
+<p>This is a failure in the test that is written inside the documentation for the code.</p>
+<p>I love Rust's <a href="https://doc.rust-lang.org/rustdoc/write-documentation/documentation-tests.html">documentation tests</a>. One on the biggest challenges in keeping software up to date is the documentation. Changes will be made to the code, but everyone's in such a hurry, that they forget to keep the documentation up to date as well. Often, you will hear from developers that it's just better to just forget it, since it's often less than useless.</p>
+<p>With doctests, not only do you ensure that you have up to date documentation, but you also provide examples to your users that you know are correct.</p>
+<p>And, as is the case most of the time, the compiler spells out the problem. There's an extra space in the value returned from the <code>hello()</code> function.</p>
+<p>Take 3:</p>
+<pre><code class="language-bash">$&gt; cargo test
+...
+ left: "Hello, everyone."
+right: "Hello, everyone!"
+</code></pre>
+<p>Almost... Let's fix the punctuation.</p>
+<pre><code class="language-bash">cargo test
+   Compiling worlds_simplest_kata v0.1.2 (/Users/christoph/src/github.com/devplaybooks/rust_worlds_simplest_kata)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.49s
+     Running unittests src/lib.rs (target/debug/deps/worlds_simplest_kata-c6a62a2629fcb368)
+
+running 1 test
+test tests::hello_world ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/worlds_simplest_kata-cfecd8ab1322d86e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests worlds_simplest_kata
+
+running 1 test
+test src/lib.rs - Hello (line 10) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.61s; merged doctests compilation took 0.29s
+</code></pre>
+<p>Boom! We are green. Ship it!</p>
+<pre><code class="language-bash">$&gt; git add .
+$&gt; git commit -m "Fixed failing tests, and compilation errors"
+[bookwalker_fix1_static 7be5b8a] Fixed failing tests, and compilation errors
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+ $&gt; git push
+ ...
+</code></pre>
+<p>Let's see</p>
+<pre><code class="language-bash">
+</code></pre>
+<p>There are, however, other ways...</p>
+<p>...</p>
+<p>...</p>
+<p>...</p>
+<p>TAKE 2:</p>
+<p>Looking at the error, it's clear that they are mixing up the trwo</p>
+<p>If you want to see a a microcosm that contains almost everything maddening about Rust, this file is it. Strings in Rust are pure pain.</p>
+<p>Nope. We've still got a problem, and this one is the
+and it points to what is probably the hardest thing to understand about Rust programming: strings. Rust pulls no punches. If you come from a scripting background like JavaScript or Python, Rust strings are going to seem like pain incarnate. Unlike most other languages, Rust puts it all out there. Strings aren't easy.</p>
+<p>Resources:</p>
+<ul>
+<li><a href="https://doc.rust-lang.org/rust-by-example/std/str.html">Strings - Rust by Example</a></li>
+</ul>
+<h4 id="question-2-do-the-unit-tests-pass"><a class="header" href="#question-2-do-the-unit-tests-pass">Question #2 Do the unit tests pass?</a></h4>
+<p>This is the <a href="https://en.wikipedia.org/wiki/Crossing_the_Rubicon">Rubicon</a> when it comes to builds. It is essential that a team keep their unit tests green, aka passing. Once you turn this check off because you "don't have time" you might as well turn in your keyboard and let the AI take over.</p>
+<p>One of the key types of tests for any running system are what's called regression tests. <a href="https://en.wikipedia.org/wiki/Regression_testing">Wikipedia defines it</a> like this:</p>
+<blockquote>
+<p><strong>Regression testing</strong> (rarely, <em>non-regression testing</em><a href="https://en.wikipedia.org/wiki/Regression_testing#cite_note-1">[1]</a>) is re-running <a href="https://en.wikipedia.org/wiki/Functional_testing" title="Functional testing">functional</a> and <a href="https://en.wikipedia.org/wiki/Non-functional_testing" title="Non-functional testing">non-functional tests</a> to ensure that previously developed and tested software still performs as expected after a change.<a href="https://en.wikipedia.org/wiki/Regression_testing#cite_note-2">[2]</a> If not, that would be called a <em><a href="https://en.wikipedia.org/wiki/Software_regression" title="Software regression">regression</a></em>.</p>
+</blockquote>
+<p><em>OLD MAN VOICE:</em> Back in my day we had what were called Quality Assurance Engineers. These were people who went through your code to make sure that the things you promised to deliver  actually were, and that you didn't break any of the existing functionality to do so.</p>
+<p>Good coverage from unit tests translates into an army of automated regression testers ready to descend upon your code at the push of a button.</p>
+<blockquote>
+<p><em>And for the record, Quality Assurance is still an essential role in any software worth its salt. But with unit tests, they can spend their time doing what's called exploratory testing. The big flaw in unit tests are that they're a self fulfilling prophecy. You can only test the things you think of. A good QA dev can bring down a site in ways that <a href="https://www.youtube.com/watch?v=GqcSXt1CQOQ">many would call unnatural</a>.</em></p>
+<p>STORY TIME: I was leading a team at a small rust belt financial institution. The consulting practice I was working for at the time  brought in a QA by the name of Paul Oaks. When we were ready to test out the front end of our application, he sat down and typed in an address. The site instantly self destructed. It took him less than one minute to destroy our application.</p>
+<p>So, I'm like, how the F' did you do that? Paul collected bizarre addresses that he knew would crap out at a lot of commercial address validation services. <strong>RESPECT YOUR QA.</strong></p>
+</blockquote>
+<h4 id="question-3-do-all-the-clippy-lints-pass"><a class="header" href="#question-3-do-all-the-clippy-lints-pass">Question #3 Do all the <a href="https://doc.rust-lang.org/clippy/">Clippy</a> lints pass?</a></h4>
+<p>No, not that [Clippy]... Rust's linter Clippy.</p>
+<p>Linting is a form of static code analysis that checks that you're not making certain kinks of programming decisions that make your code hard to maintain. Large codebases will generally establish a common set of linting configurations so that everyone is on the same page.</p>
+<p>Linting is one of the great ways to keep a codebase clean, and consistent. It's easy to miss simple, stupid things in the rush to get things out the door. A good linter that's tied to a continuous integration tool like <a href="https://github.com/features/actions">GitHub Actions</a> or <a href="https://www.jenkins.io/">Jenkins</a></p>
+<p>For this kata, I've configured the linting at the top of the <a href="https://github.com/devplaybooks/rust_worlds_simplest_kata/blob/main/src/lib.rs">src/lib.rs</a> file:</p>
+<pre><code class="language-rust">#![warn(clippy::pedantic)]  
+  
+pub struct Hello;</code></pre>
+<h4 id="question-4--is-the-code-properly-formatted-"><a class="header" href="#question-4--is-the-code-properly-formatted-">Question #4  Is the code properly <a href="https://github.com/rust-lang/rustfmt">formatted</a> ?</a></h4>
+<p>The <a href="https://github.com/rust-lang/rustfmt">fmt</a> check seems like a trivial one, but in large teams a difference of formatting can cause havoc on a large pull request.</p>
+<h4 id="question-5-do-all-the-rustdoc-lints-pass"><a class="header" href="#question-5-do-all-the-rustdoc-lints-pass">Question #5 Do all the [Rustdoc lints] pass?</a></h4>
+<p>I LOVE LOVE LOVE how Rust handles documentation. One of the biggest challenges in writing software is keeping its documentation up to date. Code samples quickly become wrong, and rushed developers are rarely given enough time to make sure that the docs are up to date, especially within an organization with a predominance of what I call "neck breathers."</p>
+<p><a href="https://doc.rust-lang.org/rustdoc/lints.html">Rustdoc lints</a> and <a href="https://doc.rust-lang.org/rustdoc/write-documentation/documentation-tests.html">doc tests</a> eliminate almost all of this problem by catching references to code blocks that don't exist, and example code that doesn't compile or pass tests. This is HUGE! One of the biggest standoffs between developers and stakeholders is documentation. Stakeholders demand it, and devs point out that it is out of date as soon as it ships. Doc tests eliminate that issue. The linters check that you are pointing to the correct places in the code, and the compiler makes sure that any exxamples you include work against the actual codebase.</p>
+<p>Thanks to GitHub <a href="https://github.com/features/actions">Actions</a> you can automate all of those features so that they run every time you push up code so that everyone is always on the same page.</p>
+<p><strong>MORAL:</strong> <em>Automate the stupid stuff.</em></p>
+<hr />
+<h2 id="lets-see-how-copilot-did"><a class="header" href="#lets-see-how-copilot-did">Let's see how CoPilot did.</a></h2>
+<p>Wow, CoPilot fixed every test. Six of the GitHub continuous integration gates passed. The problem
+is, that there are seven. <em><a href="https://www.youtube.com/shorts/9inOVXhe14U">Sad trombone sound</a></em></p>
+<p><a href="https://github.com/folkengine/wsk_CoPilot2/actions/runs/31438082328/job/93617372018?pr=1#step:4:2">CoPilot couldn't fix the clippy lints</a>:</p>
+<pre><code class="language-shell">Run cargo clippy -- -Dclippy::all -Dclippy::pedantic
+  cargo clippy -- -Dclippy::all -Dclippy::pedantic
+  shell: /usr/bin/bash -e {0}
+  env:
+    RUSTFLAGS: -Dwarnings
+    CARGO_HOME: /home/runner/.cargo
+    CARGO_INCREMENTAL: 0
+    CARGO_TERM_COLOR: always
+    Checking worlds_simplest_kata v0.1.2 (/home/runner/work/rust_worlds_simplest_kata/rust_worlds_simplest_kata)
+error: this method could have a `#[must_use]` attribute
+  --&gt; src/lib.rs:18:12
+   |
+18 |     pub fn hello(name: String) -&gt; String {
+   |            ^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#must_use_candidate
+   = note: `-D clippy::must-use-candidate` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::must_use_candidate)]`
+help: add the attribute
+   |
+18 ~     #[must_use]
+19 ~     pub fn hello(name: String) -&gt; String {
+   |
+
+error: this argument is passed by value, but not consumed in the function body
+  --&gt; src/lib.rs:18:24
+   |
+18 |     pub fn hello(name: String) -&gt; String {
+   |                        ^^^^^^ help: consider changing the type to: `&amp;str`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#needless_pass_by_value
+   = note: `-D clippy::needless-pass-by-value` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::needless_pass_by_value)]`
+
+error: variables can be used directly in the `format!` string
+  --&gt; src/lib.rs:19:9
+   |
+19 |         format!("Hello, {}!", name)
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#uninlined_format_args
+   = note: `-D clippy::uninlined-format-args` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::uninlined_format_args)]`
+help: change this to
+   |
+19 -         format!("Hello, {}!", name)
+19 +         format!("Hello, {name}!")
+   |
+
+error: this method could have a `#[must_use]` attribute
+  --&gt; src/lib.rs:22:12
+   |
+22 |     pub fn hello_world() -&gt; String {
+   |            ^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#must_use_candidate
+help: add the attribute
+   |
+22 ~     #[must_use]
+23 ~     pub fn hello_world() -&gt; String {
+   |
+
+error: could not compile `worlds_simplest_kata` (lib) due to 4 previous errors
+Error: Process completed with exit code 101.
+</code></pre>
+<hr>
+<ol class="footnote-definition"><li id="footnote-1">
+<p>GitHub actions have become an <a href="https://medium.com/@simardeep.oberoi/unveiling-github-actions-vulnerabilities-a-comprehensive-technical-guide-to-attack-vectors-and-6a26a83e9fb2">attack vector </a>of late, so always be careful about what you run. <a href="#fr-1-1">↩</a></p>
+</li>
+<li id="footnote-2">
+<p><a href="https://www.youtube.com/@MichaelSambol">Michael Sambol</a> - <a href="https://www.youtube.com/watch?v=0wPlzMU-k00">Heaps: Intro in 3 minutes</a> <a href="#fr-2-1">↩</a></p>
+</li>
+</ol><div style="break-before: page; page-break-before: always;"></div><h1 id="laser-swords"><a class="header" href="#laser-swords">Laser Swords</a></h1>
+<p>One of my favorite aspect of Star Wars lore is the relationship between a Jedi, and their light saber.
+The highest compliment Darth Vader could give to his son was
+<a href="https://www.youtube.com/watch?v=WDnoczxzQyg">this simple statement of fact</a>: "I see you have constructed a new light
+saber." Their tools were sacred. Building them, mastering them was a rite of passage... a matter of life and death.</p>
+<p>Mastery is the relationship between a person and their tools. For my mother's father, who
+helped put the first man on the moon, it was his protractor, compass and slide rule. For my father's
+father, who was a card shark, master salesman, state senator, and mob researcher, it was a deck of cards, his mastery
+of cross referencing media stories long before the internet, and his ability to make you feel like the most important
+person in the room.</p>
+<p><del>How rarely do we think about the consequences of our creations from that perspective.? We are divorced from the
+frustrated single mother just trying to schedule a doctor's appointment for her child, or the family trusting
+the "autonomous" driving software to take them home safely. We live in the age of disruption... the golden age of grift.
+The software written by the giants before us in the mainframes of our global financial systems still powers the world.
+Their creators aren't billionaries because their created a tool to look at pictures of cats on a computer, or suckered
+states into giving them carbon credits for their gas powered "climate saving" electric vehicles, and yet every single
+cent of these "titans" of silicon valley owns their fortunes to those before them that built the digital highways
+that enable their hubris. They are the ultimate "welfare queens" hoovering up every last cent of capital on the
+planet.</del></p>
+<p><del>The man who invented the spreadsheet mainly got a footnote on wikipedia for his creation
+of the single most utilitarian software application of all time.</del></p>
+<p>In starting this journey together, I am going to share my love of the craft. I want to show you how the tools  of
+our chosen path are the foundation that underpins everything. You can chose the path of our age, and let the coding
+agents do the work for you. They will leave you weak; another clone in a vaste army of replacable clones that cant hit
+the side of a barn, let alone rescue a princess, and are only their to make the powerful project the illusion of strength.
+Cannon fodder in a world where humanity's value towards humanity has never been lower.</p>
+<p>Yet while it feels like everyone is telling you to cut corners, to get rich quick, to make that bet on the stars, the
+value of craft has never been higher. You see, the secret to beating the odds in a market based world, you need to
+clock where everyone is headed, and go in the opposite direction.</p>
+<p>I'm not advocating that you ignore the chaotic innovations that are generative pre-trained transformers like Code
+Claudette and Chat Gipity. What I am advocating is that you don't become their bitch. If you don't understand
+the underlying why of the droids you're having do your bidding, it's you that's the droid. Replaceable. Expendible.</p>
+<p><del>When I interview candidates for jobs, it frustrates my colleges from HR, and also many of my more tech savy
+coworkers. I look at their resume, and simply ask them about their tool stacks. I see you're a Java developer.
+How do you test your code? Unit? Which version do you prefer? Angular and React. Why would you recommend one
+over the other to a client? What Python package manager is your preference? It's amazing how quickly you can
+tell that the light saber they are presenting as their own is borrowed. Every once in a very rare while do you
+get to have a real indepth discussion about</del></p>
+<h1 id="the-first-perspective"><a class="header" href="#the-first-perspective">The First Perspective</a></h1>
+<p>When I meditate on systems, of the the first ways I try to visualize them is through perspectives. A bank through
+customers, tellers, and payment processors; a</p>
+<p>If it's a bank, it's through customers, and bank tellers, and payment processors, and regulators, and a miriad number of
+other systems that interact with it.</p>
+<p>One of the reasons I
+like poker so much as the foundational domain for this work is that it has all of the perspectives
+spelled out plainly if you care to notice.</p>
+<p>While there are perspectives to the domain we will be working with, there are also perspectives
+in software systems. We build things that run on servers. Those servers are interacted with by
+clients. Those servers are monitored by platforms and engineers. The data they create, process,
+and use are stored in databases.</p>
+<p>None of those perspectives matter at all without the first perspective: you. That means being able
+to run code and develop it. Here's my setup:</p>
+<ul>
+<li>macOS 26.7 on Apple Silicon</li>
+<li><a href="https://ohmyz.sh/">Oh My Zsh</a></li>
+<li><a href="https://www.jetbrains.com/rust/">JetBrains RustRover</a>, <a href="https://code.visualstudio.com/">VSCode</a> &amp; <a href="https://neovim.io/">Neovim</a></li>
+<li><a href="https://rustup.rs/">Rustup</a> &amp; <a href="https://doc.rust-lang.org/cargo/">Cargo</a></li>
+</ul>
+<h2 id="lets-go"><a class="header" href="#lets-go">Let's go</a></h2>
+<p>First thing we're going to do is create a new Rust project. One of the things that I really love about
+the language is how easy they make it to manage projects. Languages like Python are a hellscape.
+<a href="https://docs.astral.sh/uv/">Uv</a>, <a href="https://python-poetry.org/">Poetry</a>,
+<a href="https://hatch.pypa.io/latest/">Hatch</a>, <a href="https://pdm-project.org/en/latest/">PDM</a>,
+<a href="https://pip.pypa.io/en/stable/">pip</a>; gang, I love ya, but come on. I just got myself acclimated to
+Poetry when uv became all the rage.</p>
+<p>Rust removed all the uncertainty. Install Rust with <a href="https://rustup.rs/">Rustup</a>. Manage your projects
+with <a href="https://doc.rust-lang.org/cargo/">Cargo</a>.</p>
+<pre><code class="language-shell">cargo new rust4failures --lib
+</code></pre>
+<p>First off, you'll notice that we're using the <a href="https://doc.rust-lang.org/cargo/commands/cargo-new.html#option-cargo-new---lib">lib flag</a>.
+By default, <code>cargo</code> will create a repo with a main file, but when I am doing domain exploration like
+this, I like to start off with a library that I can use in different contexts.</p>
+<p>Here's what we've got so far:</p>
+<p><a id="step-cargo-init"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/Cargo.toml" title="View full file">💾 <code>Cargo.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/Cargo.toml#L1-L6" title="View source">L1–L6</a> · step 001 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-001-cargo-init" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-001-cargo-init" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">[package]
+name = "rust4failures"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-001-cargo-init</code></span></p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/.gitignore" title="View full file">💾 <code>.gitignore</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/.gitignore#L1-L1" title="View source">L1–L1</a> · step 001 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-001-cargo-init" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-001-cargo-init" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-shell">/target
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-001-cargo-init</code></span></p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/src/lib.rs" title="View full file">💾 <code>src/lib.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-001-cargo-init/src/lib.rs#L1-L14" title="View source">L1–L14</a> · step 001 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-001-cargo-init" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-001-cargo-init" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">pub fn add(left: u64, right: u64) -&gt; u64 {
+    left + right
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let result = add(2, 2);
+        assert_eq!(result, 4);
+    }
+}</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-001-cargo-init</code></span></p>
+<p>Now that we have the project initialized, let's add some customizations to, shall we say, "harden" things.</p>
+<h2 id="rust-toolchaintoml"><a class="header" href="#rust-toolchaintoml">rust-toolchain.toml</a></h2>
+<p>First thing we're going to do is add a new file to the repo: the
+<a href="https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file">rustup toolchain file</a>:</p>
+<p><a id="step-clippy-pendantic"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-002-clippy-pendantic/rust-toolchain.toml" title="View full file">💾 <code>rust-toolchain.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-002-clippy-pendantic/rust-toolchain.toml#L1-L3" title="View source">L1–L3</a> · step 002 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-002-clippy-pendantic" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-002-clippy-pendantic" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">[toolchain]
+channel = "1.94.1"
+components = ["clippy", "rustfmt"]
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-002-clippy-pendantic</code></span></p>
+<h5 id="release-channel"><a class="header" href="#release-channel">Release Channel</a></h5>
+<p>Rather than setting <code>channel</code> to one of the release channels of
+<a href="https://doc.rust-lang.org/book/appendix-07-nightly-rust.html#choo-choo-release-channels-and-riding-the-trains">stable, beta, or nightly</a>,
+we are going to specify an exact version of the toolchain. This is because</p>
+<ol>
+<li>Later on, when we add linting, new lints can get added, and we don't want to accidentally break the build.</li>
+<li>It's a trauma response to having one too many times where a slight difference in versions of a language created brutal nasty bugs.</li>
+</ol>
+<h5 id="components"><a class="header" href="#components">Components</a></h5>
+<p>Next, we're adding two rustup components that are essential to my Rust development.</p>
+<h6 id="rustfmt"><a class="header" href="#rustfmt">rustfmt</a></h6>
+<p>Having solid consistent formatting will save you so much time dealing with pull requests when
+you have teams of more than one developers. While I love to listen to developers debate about
+<a href="https://www.youtube.com/watch?v=oRva7UxGQDw">tabs vs. spaces</a>, my personal opinion is that
+I don't give a shit. Pick one and move on.</p>
+<p>Luckily, Rust makes all that drama go away with <a href="https://rust-lang.github.io/rustfmt/?version=v1.10.0&amp;search=">rustfmt</a>.</p>
+<h6 id="clippy"><a class="header" href="#clippy">clippy</a></h6>
+<h2 id="cargotoml"><a class="header" href="#cargotoml">Cargo.toml</a></h2>
+<h6 id="linting"><a class="header" href="#linting">Linting</a></h6>
+<p>Rust's <a href="https://doc.rust-lang.org/clippy/index.html">Clippy linter</a> is the best in the business. And
+since I'm insane, I like to <a href="https://en.wikipedia.org/wiki/Up_to_eleven">dial it up to 11</a> with the
+<a href="https://doc.rust-lang.org/clippy/lints.html#pedantic">pedantic setting</a>.
+<img src="images/Spinal_Tap_-_Up_to_Eleven.jpg" alt="Spinal_Tap_-_Up_to_Eleven.jpg" /></p>
+<p>To install it simply run <code>rustup component add clippy</code>.</p>
+<p>Here's our updated <code>Cargo.toml</code>:</p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-002-clippy-pendantic/Cargo.toml" title="View full file">💾 <code>Cargo.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-002-clippy-pendantic/Cargo.toml#L1-L13" title="View source">L1–L13</a> · step 002 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-002-clippy-pendantic" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-002-clippy-pendantic" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">[package]
+name = "rust4failures"
+version = "0.1.0"
+rust-version = "1.94.1"
+edition = "2024"
+
+[dependencies]
+
+# bower:begin dev-dependencies
+# bower:end dev-dependencies
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+expect_used = "warn"
+unwrap_used = "warn"
+upper_case_acronyms = "allow"
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-002-clippy-pendantic</code></span></p>
+<h2 id="rust-version"><a class="header" href="#rust-version">Rust Version</a></h2>
+<p>When I started working on this project, lints were set at the top of the primary file in the project, like this:</p>
+<pre><code class="language-rust">#![warn(clippy::pedantic)]</code></pre>
+<p>Since Rust 1.74.0, the preferred method of setting lints is in the project's <code>Cargo.toml</code> file. One big benefit
+of this is that applies to all of the crates in the project, if you have more than one.</p>
+<p>Let's break down the lint settings.</p>
+<h3 id="pedantic-linting"><a class="header" href="#pedantic-linting">Pedantic Linting</a></h3>
+<p>First off, the pedantic lint. Here's what the <a href="https://doc.rust-lang.org/clippy/lints.html#pedantic">clippy docs</a> says about it:</p>
+<blockquote>
+<p>This lint group is for Clippy power users that want an in depth check of their code.</p>
+</blockquote>
+<p>Yes! I'm a power user 💪! Let's go!</p>
+<p>The reason I've set <code>priority = -1</code> is to make sure that these lints go first, so that if I override any of them, such
+as <code>upper_case_acronyms</code>, I am sure that my settings hold. Since the linting doesn't ensure a specific order without
+a priority setting, this is how you lock it in.</p>
+<h3 id="upper-case-acronyms"><a class="header" href="#upper-case-acronyms">Upper Case Acronyms</a></h3>
+<p>This is a selfish stylistic thing with me. I just like the look of <code>Card::SIX_SPADES, Card::SEVEN_SPADES</code> a lot more
+than <code>Card::SixSpades, Card::SevenSpades</code>. Maybe that's the old C programmer in me.</p>
+<h3 id="expect-and-unwrap"><a class="header" href="#expect-and-unwrap">Expect and Unwrap</a></h3>
+<p>Finally, this is probably the most important Rust lint that you an set, and TBH, I am surprised that it isn't a part
+of the pedantic lints: <code>expect_used</code> and <code>unwrap_used</code>. Here's why:</p>
+<p>On <a href="https://blog.cloudflare.com/18-november-2025-outage/">November 18, 2025 Cloudflare's engineering team</a> released the
+following code update:</p>
+<pre><code class="language-rust">/// Fetch edge features based on `input` struct into [`Features`] buffer.
+pub fn fetch_features(
+    &amp;mut self,
+    input: &amp;dyn BotsInput,
+    features: &amp;mut Features,
+) -&gt; Result&lt;(), (ErrorFlags, i32)&gt; {
+    // update features checksum (lower 32 bits) and copy edge feature names
+    features.checksum &amp;= 0xFFFF_FFFF_0000_0000;
+    features.checksum |= u64::from(self.config.checksum);
+    let (feature_values, _) = features
+        .append_with_names(&amp;self.config.feature_names)
+        .unwrap();</code></pre>
+<p>It brought down a significant portion of the internet. Can you spot why? If you're like me, as soon as you looked over
+this code you let out a cackle of pure glee. <em>Nooooooo, not that?!!!!</em></p>
+<hr />
+<p>See, unwrap() has this wonderfully nasty habit of crashing your programs when something returns <code>Err</code> or <code>None</code>. This
+is why you never ever ever ever use <code>unwrap()</code> like this and why as soon as I saw this error, and went through all
+my rust libraries and made sure there weren't any of them hiding in my code.</p>
+<p>TBH, whomever wrote this code is a real boss. I know they're probably really embarassed by it, but it takes a real king
+to bring down the internet with a single line of code. I remember the time I DDOSed my own startup when I had our email
+servers email me whenever an error was seen on the site.</p>
+<p>Failure is a gift, and this example didn't just teach the coder a valuable lesson, it taught an entire planet of Rust
+developers, while giving us all a good laugh.</p>
+<p>I do have one exception to this lint: I don't enforce it in tests. I want my bad tests to fail hard, and I want it to
+be as easy as possible to get the the meat of what we are testing.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="continuous-integration"><a class="header" href="#continuous-integration">Continuous Integration</a></h1>
+<h2 id="github-actions"><a class="header" href="#github-actions">GitHub Actions</a></h2>
+<p>This is our traffic cop. There are many different ways to setup continuous integration, but
+<a href="https://docs.github.com/en/actions">GitHub Actions</a> is one of my favorites. I'd recommend
+that you check out the entire file for our CI guardrails. For now, I've highlighted two sections:
+<code>on</code> and the <code>test</code> job. On tells us that we are checking everything every time there's a push
+or a pull request. After a while, that may be too much, and we can dial it down, but for now
+it's good.</p>
+<p><a id="step-kata"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-003-kata/.github/workflows/CI.yaml" title="View full file">💾 <code>.github/workflows/CI.yaml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-003-kata/.github/workflows/CI.yaml#L3-L5" title="View source">L3–L5</a> · <a href="https://github.com/abstecker/rust4failures/blob/step-003-kata/.github/workflows/CI.yaml#L13-L27" title="View source">L13–L27</a> · step 003 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-003-kata" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-003-kata" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-yaml"># ... 2 lines elided — full file: https://github.com/abstecker/rust4failures/blob/step-003-kata/.github/workflows/CI.yaml
+on:
+  push:
+  pull_request:
+# ... 7 lines elided — full file: https://github.com/abstecker/rust4failures/blob/step-003-kata/.github/workflows/CI.yaml
+jobs:
+  test:
+    name: Rust ${{matrix.rust}}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: [stable, 1.98.1]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{matrix.rust}}
+      - run: cargo test --all
+# ... 40 lines elided — full file: https://github.com/abstecker/rust4failures/blob/step-003-kata/.github/workflows/CI.yaml
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-003-kata</code></span></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rank-and-the-match-that-would-not-compile"><a class="header" href="#rank-and-the-match-that-would-not-compile">Rank, and the match that would not compile</a></h1>
+<p>A deck of cards is a good place to start a library, because a card is small
+enough to hold in your head and stubborn enough to punish sloppiness. A card has
+a rank and a suit. This chapter builds the rank.</p>
+<p>It also does something you may not be used to in a book: it commits code that
+does not compile, on purpose, and leaves it there. That commit is tagged. You
+can check it out. You can run <code>cargo check</code> inside it and watch it fail.</p>
+<p>That is the argument of this whole book. A failure you have never seen is a
+failure you do not understand. So we are going to look at them.</p>
+<h2 id="clearing-the-ground"><a class="header" href="#clearing-the-ground">Clearing the ground</a></h2>
+<p>Chapter 1 left a <code>Hello</code> kata in <code>src/lib.rs</code>, with a test that fails. It did its
+job, which was to show the gate working, and a poker library has no use for it.
+Remove it, and leave an empty <code>mods</code> region behind for the modules to come.</p>
+<p><a id="step-clear-the-kata"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-004-clear-the-kata/src/lib.rs" title="View full file">💾 <code>src/lib.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-004-clear-the-kata/src/lib.rs#L1-L1" title="View source">L1–L1</a> · step 004 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-004-clear-the-kata" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-004-clear-the-kata" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">//! Poker library.
+// bower:begin mods
+// bower:end mods</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-004-clear-the-kata</code></span></p>
+<h2 id="the-rank-itself"><a class="header" href="#the-rank-itself">The rank itself</a></h2>
+<p><a id="step-rank-enum"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-005-rank-enum/src/rank.rs" title="View full file">💾 <code>src/rank.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-005-rank-enum/src/rank.rs#L1-L24" title="View source">L1–L24</a> · step 005 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-005-rank-enum" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-005-rank-enum" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">// bower:begin rank
+/// The rank of a playing card.
+///
+/// The discriminants are the card's value in play, which is why the ace is
+/// fourteen rather than one. `BLANK` is the zero value: it is what you get
+/// when a rank is asked for and none is there.
+#[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
+pub enum Rank {
+    ACE = 14,
+    KING = 13,
+    QUEEN = 12,
+    JACK = 11,
+    TEN = 10,
+    NINE = 9,
+    EIGHT = 8,
+    SEVEN = 7,
+    SIX = 6,
+    FIVE = 5,
+    FOUR = 4,
+    TREY = 3,
+    DEUCE = 2,
+    #[default]
+    BLANK = 0,
+}
+// bower:end rank
+
+// bower:begin from_char
+// bower:end from_char</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-005-rank-enum</code></span></p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-005-rank-enum/src/lib.rs" title="View full file">💾 <code>src/lib.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-005-rank-enum/src/lib.rs#L2-L2" title="View source">L2–L2</a> · step 005 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-005-rank-enum" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-005-rank-enum" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">pub mod rank;</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-005-rank-enum</code></span></p>
+<p>A module that nothing declares is never compiled, so the declaration and the
+file it points at belong in the same commit.</p>
+<p>The names are shouted — <code>ACE</code>, not <code>Ace</code>. That is a break with Rust's usual
+style, and you would expect <code>non_camel_case_types</code> to complain. It does not:
+that lint stays quiet for a name that is already entirely uppercase, and clippy
+at its most pedantic has nothing to add either. A style rule you assumed was
+enforced turns out not to be, which is worth knowing before you lean on it.</p>
+<h2 id="the-match-that-would-not-compile"><a class="header" href="#the-match-that-would-not-compile">The match that would not compile</a></h2>
+<p>Now the interesting part. A rank should be constructible from the character that
+names it, so that <code>'K'</code> becomes <code>Rank::KING</code>. The obvious way to write that is a
+<code>match</code>, and the obvious <code>match</code> is wrong.</p>
+<p><a id="step-from-char-broken"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-006-from-char-broken/src/rank.rs" title="View full file">💾 <code>src/rank.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-006-from-char-broken/src/rank.rs#L25-L43" title="View source">L25–L43</a> · step 006 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-006-from-char-broken" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-006-from-char-broken" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">impl From&lt;char&gt; for Rank {
+    fn from(c: char) -&gt; Self {
+        match c {
+            'A' | 'a' =&gt; Rank::ACE,
+            'K' | 'k' =&gt; Rank::KING,
+            'Q' | 'q' =&gt; Rank::QUEEN,
+            'J' | 'j' =&gt; Rank::JACK,
+            'T' | 't' | '0' =&gt; Rank::TEN,
+            '9' =&gt; Rank::NINE,
+            '8' =&gt; Rank::EIGHT,
+            '7' =&gt; Rank::SEVEN,
+            '6' =&gt; Rank::SIX,
+            '5' =&gt; Rank::FIVE,
+            '4' =&gt; Rank::FOUR,
+            '3' =&gt; Rank::TREY,
+            '2' =&gt; Rank::DEUCE,
+        }
+    }
+}</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-006-from-char-broken</code></span></p>
+<p>Every rank is listed. Every card in the deck is covered. The code is still
+rejected, and the message is the lesson:</p>
+<p><span class="step-output"><sub>$ cargo check · step 006 of rust4failures · <a href="https://doc.rust-lang.org/error_codes/E0004.html">E0004</a></sub></span></p>
+<pre><code class="language-text">[...]
+error[E0004]: non-exhaustive patterns: `'\0'..='/'`, `'1'`, `':'..='@'` and 9 more not covered
+[...]
+</code></pre>
+<p><code>char</code> is not "the characters on a playing card". <code>char</code> is every Unicode scalar
+value, and the compiler will not let you pretend otherwise. It is not asking
+what a card is. It is asking what happens when someone hands you a <code>'z'</code>.</p>
+<p><code>expect="compile_fail"</code> on the directive above declares that this step is
+supposed to be rejected. That is a promise the toolchain checks: when Bower
+replays this book it runs <code>cargo check</code> at this step and treats a <em>successful</em>
+build as the error. The failure is not an accident that survived into print. It
+is an asserted fact about this commit.</p>
+<div class="step-exercise">
+<p><strong>Your turn: Make this compile</strong></p>
+<p>The compiler has named every character it is not told about. Each one needs an
+answer — not just the thirteen on a card.</p>
+<ul>
+<li>The smallest fix is one more arm. Which pattern, and what does it return?</li>
+<li>Could <code>'z'</code> be an <em>error</em> instead of a rank? What would <code>from</code> have to
+become for that to be true?</li>
+</ul>
+<p>Fork <a href="https://github.com/abstecker/rust4failures/fork">the repository</a>, then:</p>
+<pre><code class="language-console">git clone https://github.com/abstecker/rust4failures.git   # or your fork
+git checkout step-006-from-char-broken
+cargo check
+</code></pre>
+<p>Green means you did it. The answer is <a href="ch03-rank.html#step-from-char">the next step</a>.</p>
+</div>
+<h2 id="answering-the-question"><a class="header" href="#answering-the-question">Answering the question</a></h2>
+<p>The compiler asked what happens to a <code>'z'</code>. <code>BLANK</code> is the answer, and the whole
+reason <code>BLANK</code> exists.</p>
+<p><a id="step-from-char"></a></p>
+<details class="step-answer">
+<summary>Show the answer</summary>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-007-from-char/src/rank.rs" title="View full file">💾 <code>src/rank.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-007-from-char/src/rank.rs#L41-L41" title="View source">L41–L41</a> · step 007 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-007-from-char" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-007-from-char" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust"><span class="boring">impl From&lt;char&gt; for Rank {
+</span><span class="boring">    fn from(c: char) -&gt; Self {
+</span><span class="boring">        match c {
+</span><span class="boring">            'A' | 'a' =&gt; Rank::ACE,
+</span><span class="boring">            'K' | 'k' =&gt; Rank::KING,
+</span><span class="boring">            'Q' | 'q' =&gt; Rank::QUEEN,
+</span><span class="boring">            'J' | 'j' =&gt; Rank::JACK,
+</span><span class="boring">            'T' | 't' | '0' =&gt; Rank::TEN,
+</span><span class="boring">            '9' =&gt; Rank::NINE,
+</span><span class="boring">            '8' =&gt; Rank::EIGHT,
+</span><span class="boring">            '7' =&gt; Rank::SEVEN,
+</span><span class="boring">            '6' =&gt; Rank::SIX,
+</span><span class="boring">            '5' =&gt; Rank::FIVE,
+</span><span class="boring">            '4' =&gt; Rank::FOUR,
+</span><span class="boring">            '3' =&gt; Rank::TREY,
+</span><span class="boring">            '2' =&gt; Rank::DEUCE,
+</span>            _ =&gt; Rank::BLANK,
+<span class="boring">        }
+</span><span class="boring">    }
+</span><span class="boring">}</span></code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-007-from-char</code></span></p>
+</details>
+<p>One line. The block above holds the whole function, because the repository needs
+the whole function, but only the new line was printed on the page. That is what
+the <code>bower:show</code> markers do, and they never reach the repository.</p>
+<h2 id="telling-the-heros-story"><a class="header" href="#telling-the-heros-story">Telling the hero's story</a></h2>
+<p>A conversion is a claim about every input, so the tests are about every input.
+Not a representative sample. Every one.</p>
+<p><a id="step-from-char-tested"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-008-from-char-tested/Cargo.toml" title="View full file">💾 <code>Cargo.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-008-from-char-tested/Cargo.toml#L9-L11" title="View source">L9–L11</a> · step 008 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-008-from-char-tested" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-008-from-char-tested" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">[dev-dependencies]
+rstest = "0.23"
+
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-008-from-char-tested</code></span></p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-008-from-char-tested/src/rank.rs" title="View full file">💾 <code>src/rank.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-008-from-char-tested/src/rank.rs#L45-L78" title="View source">L45–L78</a> · step 008 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-008-from-char-tested" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-008-from-char-tested" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">
+#[cfg(test)]
+#[allow(non_snake_case)]
+mod rank_tests {
+    use super::*;
+    use rstest::rstest;
+
+    #[rstest]
+    #[case('A', Rank::ACE)]
+    #[case('a', Rank::ACE)]
+    #[case('K', Rank::KING)]
+    #[case('k', Rank::KING)]
+    #[case('Q', Rank::QUEEN)]
+    #[case('q', Rank::QUEEN)]
+    #[case('J', Rank::JACK)]
+    #[case('j', Rank::JACK)]
+    #[case('T', Rank::TEN)]
+    #[case('t', Rank::TEN)]
+    #[case('0', Rank::TEN)]
+    #[case('9', Rank::NINE)]
+    #[case('8', Rank::EIGHT)]
+    #[case('7', Rank::SEVEN)]
+    #[case('6', Rank::SIX)]
+    #[case('5', Rank::FIVE)]
+    #[case('4', Rank::FOUR)]
+    #[case('3', Rank::TREY)]
+    #[case('2', Rank::DEUCE)]
+    #[case('_', Rank::BLANK)]
+    #[case(' ', Rank::BLANK)]
+    #[case('z', Rank::BLANK)]
+    fn from__char(#[case] input: char, #[case] expected: Rank) {
+        assert_eq!(expected, Rank::from(input));
+    }
+}</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-008-from-char-tested</code></span></p>
+<p>Two conventions worth naming, because they run through the rest of this book.</p>
+<p>The test is called <code>from__char</code>, with two underscores, which is not idiomatic
+Rust and is why the module allows <code>non_snake_case</code>. The doubled underscore reads
+as "the tests for <code>from</code>, the <code>char</code> ones". When a test fails at three in the
+morning, the name should tell you where to stand before you have read a line of
+its body.</p>
+<p>And the cases are exhaustive on purpose — <code>'z'</code> and <code>' '</code> and <code>'_'</code> sit in the
+same list as the ace. The negative cases are not an afterthought bolted on at
+the bottom. They are the reason the list exists at all. The compiler already
+made us answer for them once. The tests hold us to the answer.</p>
+<h2 id="what-is-in-the-repository-now"><a class="header" href="#what-is-in-the-repository-now">What is in the repository now</a></h2>
+<p>Five commits, each one tagged and checkoutable. One of them does not build, and
+that is recorded as a fact rather than hidden as an embarrassment.</p>
+<p>That is the shape of every chapter from here.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="introduction-1"><a class="header" href="#introduction-1">Introduction</a></h1>
+<blockquote>
+<p>Motto: Failure is a gift.</p>
+</blockquote>
+<p>This is a book about failure, specifically how failure, if managed correctly, and used as a tool for learning,
+is the best way to grow as a software developer and build strong systems. Since I am a huge fan of domain-driven design
+(DDD), we will be focusing on one specific domain. This will allow me to
+show just how deep one can go into a domain, and how, if designed properly, you can build amazing things.</p>
+<p>In order to do that, you need to give yourself a net, so that you can take chances and make mistakes and from them
+learn. I may not be the greatest, most accomplished programmer in the world, but I pride myself in being able to walk
+onto any team, programming in any language, and bring something to the table.</p>
+<p>As we go, we will be building this poker engine together, and you will get to see just how stupid I can be, and how
+in the end, it doesn't really matter. When you get right down to it, I code because it's fun. This was a side project
+I started to find some peace as the pandemic started taking over everyone's lives. Rust is a very stiff, controlling
+language, and at that time I felt I needed to find a little control in something.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+
+                    <footer class="page-footer">
+                        <a href="https://github.com/abstecker/rust4failures">https://github.com/abstecker/rust4failures</a>
+                    </footer>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>

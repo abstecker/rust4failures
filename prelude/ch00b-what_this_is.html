@@ -1,0 +1,306 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>What This Is - Rust for Failures</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="How controlled failing is the way to build solid systems.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/step-meta.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust for Failures</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="what-is-this"><a class="header" href="#what-is-this">What Is This?</a></h1>
+<p>This is a mining expedition. One of the things I like to do as a programmer is to
+find a problem area, and explore it; explore the way the data lends itself to
+patterns. I call it making the data plastic.</p>
+<p>When I refer to the term <em>plastic</em>, I am using the ol' timey definition of the
+word... what Merrian-Webster has relegated to the 3a and 3b spots in their
+<a href="https://www.merriam-webster.com/dictionary/plastic">definition</a>.</p>
+<pre><code class="language-txt">plastic - adjective
+   3a : capable of being molded or modeled
+   3b : capable of adapting to varying conditions : pliable
+</code></pre>
+<p>I wanted to show my readers a window into how I explore and work with systems from the ground up.
+It's rare that you get the luxury of exploring the fundamental domain of a problem space. It's one
+of the attractions of working with startups. Generally, you come into something that is so far
+entrenched that you feel more like the guy at the end of the circus parade cleaning up shit, than
+someone "innovating."</p>
+<p>The work that makes up the code in this book started as a way for me to learn Rust by exploring
+a domain space that interests me: poker; specifically what they call the GTO of Game Theory Optimal
+style of poker poker play. Generally, the way to explore this is to purchase what they call a poker
+solver. It helps you with the doing the calculations around the style, allowing you to get familiar
+with the math, and develop your own style of play around it.</p>
+<p>Fuck that. Let's write our own.</p>
+<p>The original goal of this book was to allow programmers at various levels to experience what it was like
+to pair with me. Pair programming was something that I was introduced to at a company called Pilar
+Technology in Columbus, Ohio. It allowed me to side along side some amazing developers and experience
+how they looked at programming. Each different... each unique... each valid.</p>
+<p>I quickly discovered that my own style is radically different than anyone else that I have ever worked
+with. It's a style born out of being raised by a single genius, on the spectrum lesbian mother. I call it
+the short circuit, or as a <a href="https://www.youtube.com/watch?v=un3NkWnHl9Q">wise philosopher once called it</a>,
+"flip mode. Flip mode's the greatest."</p>
+<p>It's hard to explain how it works. It's mainly about how it's been my experience that stakeholders have
+a very narrow grasp of how the systems they want to build would actually work. How the state would
+be leveraged in a way to bend to their will. They think they have all the answers, whereas in fact,
+they've come across more often than not as toxic idiots. Are news is now filled with the results of
+their hubris. Always bet on stupid.</p>
+<p>That's why I say that people don't know what they want until they see it. It's why one of my core values
+as a developer is what I call "demo on demand." That we should ready at any time and any place to show
+our work.</p>
+<h2 id="enter-the-clankers"><a class="header" href="#enter-the-clankers">Enter the Clankers</a></h2>
+<p>One note, about five years into this little exercise, agentic coding agents started entering the
+playing field. I started out playing with GitHub's Copilot. I found it to be mainly good at helping
+to fill out long, repetative code sections such as
+<a href="https://github.com/ImperialBower/pkcore/blob/78a45ab121e05221ac2ede3d1ea95f4260aa4e2f/src/macros.rs#L55">this macro to help create hand ranges</a>.
+It was amusing watching it create code snippets, only for the Rust compiler to point out through
+linting how the code had issues. Generally, this is because Rust is in very active development,
+and LLMs are months if not years behind things.</p>
+<p>Later on, I was introduced to Claude Code at work, and decided to explore its impact on how I programmed
+as a veteran developer. It's allowed to to establish some defensive techniques around the technology,
+that have allowed me to leverage the technologies in ways that I find interesting, but also concerning...
+feelings that I will be exploring as a part of our work through this book.</p>
+<p>A big plus IMNSHO in all this is that I had spent years establishing the core of this project long before
+I had ever heard of LLMs. This has given me a foundation that acts as a counterbalance to the
+intentionally designed pull that these tools have baked into them, to make you dependent on their
+utility. Back when I worked at the 7-11, I called this the "curse of convenience." It is one of the
+most dangerous aspects of capitalism, and one that I at least strive to be aware of, even as my lazy
+ass has a delicious <a href="https://www.thetasteoftuscany.com/">Taste of Tuscany</a> calzone delivered to my house.</p>
+<h2 id="creating-the-developers-hans-device"><a class="header" href="#creating-the-developers-hans-device">Creating the Developer's HANS Device</a></h2>
+<p>As you will soon learn following along with me, I test the shit out of my code. I test it one way, and
+then another way, and even then I test it some more. Agentic coding tools have given us velosity, but at
+the cost of safety. We're moving at hundreds of miles an hours faster than every before without a care in
+the world, unprepared for when our stupid asses fly through the window of our top of the line racing car.
+Just as it did in the automotive field, the coding field will only discover the path forward through
+a lot of pain and deaths. The problem is, the fucktards creating these systems don't give a flying fuck
+about how many people get fucked from their fuckery. That's the job for idealistic fools like you and
+me, who try to find a path forward, whilst dodging the slings and arrows of life. It took for a lot of
+race car drivers getting brain injuries before Dr. Robert Hubbard created the
+<a href="https://en.wikipedia.org/wiki/HANS_device">HANS device</a>. It's going
+to take a lot of stupid for us to figure out to same.</p>
+<p>All I can say is, the clankers will gladly help you fuck yourself, and will also gladly help you unfuck
+yourself, but they will not help you avoid getting fucked in the first place. That's up to us,
+mother-fucker.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../prelude/ch00a-introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../prelude/ch00c-hell_in_a_cell.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+
+                    <footer class="page-footer">
+                        <a href="https://github.com/abstecker/rust4failures">https://github.com/abstecker/rust4failures</a>
+                    </footer>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../prelude/ch00a-introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../prelude/ch00c-hell_in_a_cell.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
