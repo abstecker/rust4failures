@@ -1,0 +1,6 @@
+/* The table (EPIC-19). The host is a block in the chapter's column, and the
+   picture inside it keeps the width it had as a plain <img>; everything past
+   Deal is styled inside the element's own shadow root by pk-table.css. Paper
+   never reads this file. */
+pk-table { display: block; margin: 1em 0; }
+pk-table > img { display: block; max-width: 100%; height: auto; }

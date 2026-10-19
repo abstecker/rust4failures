@@ -1,0 +1,5 @@
+pkarena0-web v0.2.2 — the <pk-table> embed build, vendored unchanged.
+source:  https://github.com/ImperialBower/pkarena0-web/tree/v0.2.2
+release: https://github.com/ImperialBower/pkarena0-web/releases/tag/v0.2.2
+asset:   pk-table-v0.2.2.tar.gz (its MANIFEST.sha256 verified by play/fetch.sh)
+license: MIT OR Apache-2.0 (LICENSE-MIT, LICENSE-APACHE beside this file)
