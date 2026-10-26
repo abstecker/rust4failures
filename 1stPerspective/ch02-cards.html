@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Cards - Rust for Failures</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="How controlled failing is the way to build solid systems.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/step-meta.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust for Failures</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="cards"><a class="header" href="#cards">Cards</a></h1>
+<p>The game is No Limit Texas Hold'em, specifically an exploration of playing cards, and how they can be digitally programmed to reflect the different perspectives
+games of poker.</p>
+<p>At first I thought that I would try to organize this, weaving in theory into the code as we code together, demonstrating
+a planned, rational journey together. I find it extremely inspiring how developers can plan out what they want to
+accomplish with clear design documents for
+<a href="https://gamedevbeginner.com/how-to-write-a-game-design-document-with-examples/">games</a> or
+<a href="https://dzone.com/articles/guide-to-write-a-system-design-document">complex systems</a>, and I've certainly written
+many of the latter in a professional capacity, except that's not how I approached the work that is the foundation of
+this book, and it's not how I want to write about it.</p>
+<p>I guess the formal definition of the area of exploration is called
+<a href="https://en.wikipedia.org/wiki/Domain-driven_design">Domain-driven design</a>, a term coined by Eric Evans in 2003 in a
+book by the same name. The concepts in that book had a profound effect on me when I was evolving into a reckless startup
+developer to a consultant for various companies.</p>
+<p>But there are aspects of DDD that I will not be including. This is not a book about stake holders, or creating a
+<a href="https://martinfowler.com/bliki/UbiquitousLanguage.html">Ubiquitous Language</a> for our
+<a href="https://martinfowler.com/bliki/BoundedContext.html">Bounded Contexts</a>. At least not yet... perhaps never.</p>
+<p>It's strange... you'd think that as much money I've made for for so many people that I'd value their
+opinion more about these things, but the truth is, I don't. For me, the domain of a system is not the same thing as the
+utility of said domain. A well designed domain should be able to flower into an almost unlimited number of possible
+applications and perspectives. Stakeholders are thirsty, and thirsty, starving people aren't particularly creative.
+They want their value NOW. They don't care about quality. They could give a flying fuck about flexibility. They just
+had to sell their souls to a room full of sociopathic investors, and need to hit that sweet sweet startup lottery, baby!</p>
+<p>They're junkies. Gambling junkies. And man, now that they're sniffing that A.I. crack, it's like 1983 all over again.</p>
+<p>It's only recently that I realized it. I should have noticed sooner, growning up around musicians duing the final days
+of the world <a href="https://en.wikipedia.org/wiki/Freeway_Ricky_Ross">Freeway Ricky Ross</a> built. (Trust me, metal heads and
+gangsta rappers got nothing on orchestral brass players. Don't let the Ravel fool ya.)</p>
+<p>Having said that, I love you guys. Hey, late stage Capitalism is a hell of a drug. But I'm not getting high off my own
+supply. Let me cook. And when we cook, our muse is <a href="../prelude/ch00_-telos.html">Telos</a>. This is problem spelunking.
+Exploring a concept, and discovering how it realizes in digital form. It uses lenses of perspective,
+to give us windows into these ideas, and see how they manifest into practical tools and utilities. It's a journey, not
+a destination.</p>
+<p>I started this because I like watching poker shows, and I was curious about all the statistics and graphics that they
+show, and about the poker solvers that they talk about. I wanted to take the game, and try to distill it down to
+it's essence, and then see how the types that make it up can be shaped into more complex things.</p>
+<hr />
+<hr />
+<p>What makes games like poker particularly interesting is that, unlike games like
+chess, players only have access to a subset of the total information that makes up the game at any point in time.</p>
+<p>In Chess, everything you know about the state of the game is right there in front of you:</p>
+<pre><code class="language-txt">      a   b   c   d   e   f   g   h
+    +---+---+---+---+---+---+---+---+
+  8 | ♜ | ♞ | ♝ | ♛ | ♚ | ♝ | ♞ | ♜ | 8
+    +---+---+---+---+---+---+---+---+
+  7 | ♟ | ♟ | ♟ | ♟ | ♟ | ♟ | ♟ | ♟ | 7
+    +---+---+---+---+---+---+---+---+
+  6 |   |   |   |   |   |   |   |   | 6
+    +---+---+---+---+---+---+---+---+
+  5 |   |   |   |   |   |   |   |   | 5
+    +---+---+---+---+---+---+---+---+
+  4 |   |   |   |   |   |   |   |   | 4
+    +---+---+---+---+---+---+---+---+
+  3 |   |   |   |   |   |   |   |   | 3
+    +---+---+---+---+---+---+---+---+
+  2 | ♙ | ♙ | ♙ | ♙ | ♙ | ♙ | ♙ | ♙ | 2
+    +---+---+---+---+---+---+---+---+
+  1 | ♖ | ♘ | ♗ | ♕ | ♔ | ♗ | ♘ | ♖ | 1
+    +---+---+---+---+---+---+---+---+
+      a   b   c   d   e   f   g   h
+</code></pre>
+<p>What makes it a challenge, is how quickly the different possibilities can spiral out of human comprehension. The
+mathmetician Claude Shannon, OG computer chess programmer, described what is now called the
+<a href="https://en.wikipedia.org/wiki/Shannon_number">Shannon Number</a>, 10¹²⁰, which is
+a conservative lower bound of the game-tree complexity of chess. Now I am not a mathmetician, but that's a lot. Chess
+becomes a pure force of calculation on the part of the players, which of course creates nothing but <a href="https://www.chess.com/blog/Rinckens/the-border-between-genius-and-craziness-is-only-a-thin-line">very stable
+geniuses</a>.</p>
+<p>Poker, on the other hand, is a game where you only know what you can see, what you can sense, and what you can remember.
+What Game Theory calls, a <a href="https://en.wikipedia.org/wiki/Bayesian_game">game of incomplete information</a>.</p>
+<p>Now, I'm not telling you this because I want to flex on how smart I am. I'm telling you this as a hint to how stupid I
+am, and how as we go down this path, me and my big brain are going to do a lot of very time consuming shit, that would
+have been better spent cracking open a book, or talking to an expert. But what's the fun in that? Lord knows us comp
+sci guys are the masters of time and space and have already taken over the world, so why should we bother listening
+to anyone else?</p>
+<p>You start with a deck of 52 <a href="https://www.youtube.com/watch?v=kY6DmPs4klU">playing cards</a>.</p>
+<pre><code class="language-txt">A♠ K♠ Q♠ J♠ T♠ 9♠ 8♠ 7♠ 6♠ 5♠ 4♠ 3♠ 2♠
+A♥ K♥ Q♥ J♥ T♥ 9♥ 8♥ 7♥ 6♥ 5♥ 4♥ 3♥ 2♥
+A♦ K♦ Q♦ J♦ T♦ 9♦ 8♦ 7♦ 6♦ 5♦ 4♦ 3♦ 2♦
+A♣ K♣ Q♣ J♣ T♣ 9♣ 8♣ 7♣ 6♣ 5♣ 4♣ 3♣ 2♣
+</code></pre>
+<p>There is not a more concentrated form of pure mischief than the deck of cards. Much like pasta,
+playing cards started in <a href="https://en.wikipedia.org/wiki/Chinese_playing_cards">ancient China</a> as
+a drinking game before spreading through <a href="https://en.wikipedia.org/wiki/Ganjifa">India</a>,
+<a href="https://en.wikipedia.org/wiki/As-Nas">Persia</a> and Egypt, only to arrive in Europe in the late 14th century;
+the first record of which was their being banned in the city of Bern in 1367.</p>
+<p>The modern deck that we play today in casinos is what is called the
+<a href="https://en.wikipedia.org/wiki/French-suited_playing_cards">French Deck</a> because of their
+choice of suits being Spades, Hearts, Diamonds and Clubs, as well as their introduction of
+the Queen. <em>🇫🇷 Vive la France! 🇫🇷</em></p>
+<h2 id="deconstructing-the-cards"><a class="header" href="#deconstructing-the-cards">Deconstructing the Cards</a></h2>
+<p>In our quest to bring poker into The Matrix, we need to define what they are digitally.</p>
+<p>If we were to define cards from a <a href="https://en.wikipedia.org/wiki/Domain-driven_design#Building_blocks">DDD</a>
+perspective we would call them <a href="https://en.wikipedia.org/wiki/Value_object">Value Objects</a>. But
+we would also call their Ranks and Suits Value Objects, as well as their collection into a Deck or 52,
+or the hands each players are dealt, or the common cards sitting in the middle of the table. One of the funny things
+about talking with computer scientists is, given how specific their craft is, it sure can be fucking vague.</p>
+<p>The truth is, that every domain you wrestle with has its own unique set of textures. In finance, it is the hell that
+is decimal places and percentages. In mail, it's the nightmare that is addresses and zip codes.</p>
+<p>Playing cards are a fun one. I can't think of any domain where the underlying structures are so simple, and yet the
+results can be so complex. Maybe it's just that mathmeticians are all degenerate gamblers, but they've managed to make
+a simple deck of 52 cards a central player in the study in the fields of <a href="https://en.wikipedia.org/wiki/Combinatorics">combinatorics</a>,
+<a href="https://en.wikipedia.org/wiki/Probability">probability</a>, <a href="https://en.wikipedia.org/wiki/Information_theory">information</a>,
+<a href="https://en.wikipedia.org/wiki/Game_theory">game</a> and <a href="https://en.wikipedia.org/wiki/Group_theory">group</a> theory, as well
+as the study of the surprisingly tricky and soon to be very much in the news thanks to the fun that is quantum computing:
+<a href="https://en.wikipedia.org/wiki/Randomness">randomness</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../1stPerspective/ch01a-scratch.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../1stPerspective/ch03-rank.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+
+                    <footer class="page-footer">
+                        <a href="https://github.com/abstecker/rust4failures">https://github.com/abstecker/rust4failures</a> v0.1.4
+                    </footer>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../1stPerspective/ch01a-scratch.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../1stPerspective/ch03-rank.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

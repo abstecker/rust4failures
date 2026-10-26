@@ -1,0 +1,337 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Introduction - Rust for Failures</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="How controlled failing is the way to build solid systems.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/step-meta.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust for Failures</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<blockquote>
+<p>Motto: Failure is a gift.</p>
+</blockquote>
+<p>I'm 20. It's four o'clock in the morning. I'm working at the solo graveyard shift at the <a href="https://www.google.com/maps/place/1010+Hillside+Blvd,+Daly+City,+CA+94014/@37.6897939,-122.4612692,54a,75y,219.32h,82.81t/data=!3m7!1e1!3m5!1sqwK8hlHt7G9vtZKahcsCIg!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D7.189452548127392%26panoid%3DqwK8hlHt7G9vtZKahcsCIg%26yaw%3D219.31739032217254!7i16384!8i8192!4m15!1m8!3m7!1s0x808f7c0efaf5a78b:0x9cad5aa0d03c3ca1!2s1010+Hillside+Blvd,+Daly+City,+CA+94014!3b1!8m2!3d37.689577!4d-122.4615136!16s%2Fg%2F11b8v6x6dc!3m5!1s0x808f7c0efaf5a78b:0x9cad5aa0d03c3ca1!8m2!3d37.689577!4d-122.4615136!16s%2Fg%2F11b8v6x6dc?entry=ttu&amp;g_ep=EgoyMDI2MDkwOC4wIKXMDSoASAFQAw%3D%3D">Colma 7-11</a> (where
+San Francisco buries their dead) when a motor home pulls up into the parking lot. A guy steps out, and walks into the
+store, heading over to the coffee and pours himself a cup. Approaching the register, he extends his hand out to me.</p>
+<p>"I just wanted to thank you."</p>
+<p>That's when I recognized him. A year before, he was pointing a gun at my face, robbing the store of
+$202 dollars. The police caught him a few hours later with the thanks of their K-9 unit.</p>
+<p>It was because of me and the Daly City PD that he turned his entire light around. Now he was
+working as a cook in an amazing SF restaurant, and his entire life was for the better. I took his hand,
+laughed, and said "you're welcome. That will be $2."</p>
+<p>Failure is a gift, if you learn from it.</p>
+<p>Meanwhile, I was still the same loser I was for the last two years, making shit wages, stocking
+shelves, mopping the floors, and making sure that the coffee was always fresh. I kept working
+there for another year, when a man with six bullets in him, on probation, walked into
+the store, and pointed a semi-automatic pistol at my face as his 16 year old partner kept watch
+for police.</p>
+<p>Failure is a gift, if you learn from it.</p>
+<p>Stealing a pack of Swisher Sweets and the $247 dollars from the register, they rushed out of the
+door and drove away in a stolen car, which they crashed into the Balboa Bart Station shortly
+thereafter where they were quickly arrested.</p>
+<p>As I stared down the barrel of the rusty gun, I didn't see my life flash before my eyes. What I did see surprised me.
+You see, for the last few years I had been dating this girl who was a vegetarian. So I decided to be a vegetarian
+too. At that moment, however, I had one thought in my mind: <em>man, I really want a pepperoni pizza.</em> So that day, I
+went out for lunch with my friend Irving, and stopped being a vegetarian. It would take me another 10 years to get
+my shit together.</p>
+<p>Failure is a gift, if you learn from it.</p>
+<p>The thing is, I've been a failure all my life. I’ve dropped out of college three times.
+I graduated from high school with a D average. I’ve lost every professional French Horn audition
+I’ve ever taken. I spent a time homeless crashing on friends couches when they would let me, and
+sleeping on Bart trains, parks and the San Francisco Symphony's Davies Symphony Hall musician's lounge.
+(I knew the security guards because I used to play in the SF Symphony Youth Orchestra. Always be nice to the people
+who control the doors.)</p>
+<p>It would take me about 10 years to finally start figure it out.</p>
+<p>My hobby Christmas Songbook website and gotten me a $350 bill from my ISP. At the time I was making $7 an hour as a
+walking messenger in SF. I was fucked.</p>
+<p>Except, it turns out I wasn't. The reason I got the spike in gtraffic was because I was written up and the prestigious
+Yahoo! magazine, which in turn was copied in the New York Times. Within a year, I was working for a startup called
+XOOM.com. 28 years later I am still programming.</p>
+<p>Turns out, that failure fast, and failing with intent creates learning systems that get stronger and they grow.
+Controlled failing is one of a developers greatest superpower.</p>
+<p>I am proof positive of this. I don't have any degrees; I am completely self taught; and I am an old fuck still employed
+through three market crashes.</p>
+<p>I would argue that failure is the single most powerful force in the greatest super power on the planet. The big money
+is on failing big. Why use your profits to improve customer satisfaction
+in your airline, when you can instead give yourself and your investor pals more cash with stock
+buybacks? Why earn profits when you can make money promising the moon as long as number go up and
+you get while the getting is good? Why ensure the best returns for your customers, when you can
+instead create dark money pools making sure that you always take the cream off the top first? Why
+represent people, when you can lock in a job for life and get hot stock tips and free gigs for
+your fam just by not getting anything actually done?</p>
+<p>Failure is a superpower. Some choose to use it for evil, and are incredibly wealthy. Others choose to use it for good,
+and are incredibly poor in comparison. I choose to use it for good, building systems that I am always proud to walk
+away from. Stupid me.</p>
+<h2 id="who-am-i"><a class="header" href="#who-am-i">Who am I?</a></h2>
+<p>I'm Christoph. I'm a professional software developer who has been working for 28 years. I got my
+start in the SF dot.com boom, and went on to live through three tech sector crashes. I'm 60 years
+old, and can still walk onto any team coding in any language and deliver value by using the techniques
+that I will be cover in this book. My work is in cars and planes and banks and electric charging
+stations and government agencies that I am not allowed to talk about, in languages that you
+probably hate, like Java and PHP, and .NET and JavaScript and Ruby and Python and C++ and
+Kotlin, and TypeScript and C. No, I didn't make bank off of one of the startups that I worked for,
+and TBH, I got off pretty good walking away with nothing, given how fucked several of my friends got
+from companies where their contributions were critical. I did make a lot of fucking money for a lot of
+companies, and always by doing work that I was proud of. I try to be a force multiplier. Find gaps...
+automate away the gaps... repeat until no longer needed... walk away smiling. I've worked with dozens
+of developers who could code me under the table, and I'm grateful for how much I've learned from them.
+But there's only one Christoph, and I'm Christoph, mother-fucker.</p>
+<h2 id="why-poker"><a class="header" href="#why-poker">Why Poker?</a></h2>
+<p>Poker is a nice fixed domain, with clear rules that allow us to focus on code instead of research. It's a fun way to
+visually show code in action. Plus,
+I like playing and watching poker, and it's fun. I an interested in what they call Game Theory
+Optimal (GTO) style of play. Instead of paying hundreds of dollars for a one of those pro solver tools,
+I thought that it would be more fun to write my own.</p>
+<p>NOTE: Gambling addiction is one of the plagues of our times. I am not a gembler. I just
+like to plunk down a few hundreds every now and then on a tournament. More often, I am
+watching WSOP tournaments and shows on Poker Go. Please be careful. This code is not designed
+to encourage you to gamble.</p>
+<h2 id="spoiler-alert"><a class="header" href="#spoiler-alert">SPOILER ALERT</a></h2>
+<p>Here are a few examples of what I am talking about. When I started out on this project, I was curious
+about web assembly. I wanted to build my library, and see how it faired from the command line and maybe
+through a web page. Now, thanks to web assembly, I can create multiple purely client side tools, such
+as a <a href="https://imperialbower.github.io/pkgto-web/">GTO style card combination analyzer</a>,
+and a client based <a href="https://imperialbower.github.io/pkarena0-web/">poker table where you play against eight bots</a>,
+as well as binding it to a <a href="https://pypi.org/project/pkcore-py/">Python</a> or
+<a href="https://www.npmjs.com/package/@imperialbower/pkcore">Node.JS</a> library. These are all built with
+the same foundational codebase. There are many other examples that I have been playing with, including
+a client/server architecture where you can play against various AI bots, and a command line
+terminal client for those old school like me.</p>
+<p>Here is that table, replaying The Hand: Gus Hansen against Daniel Negreanu, High Stakes Poker, 2006.
+Step through it with ⏮ ◀ ▶ ⏭, right here in the page.</p>
+<bowery-table base="../bowery/">
+<script type="application/yaml">
+{"mode":"replay","layout":"ring","hand":{"pkcore_version":"0.17.0","format_version":1,"hand":{"id":"hsp-s2e11-the-hand","game":"holdem","source":"High Stakes Poker Season 2, Episode 11","description":"The Hand: Gus Hansen's quad fives over Daniel Negreanu's sixes full"},"table":{"name":"High Stakes Poker","seats":8,"button":0,"stakes":{"small_blind":300.0,"big_blind":600.0,"ante":100.0},"betting_structure":{"kind":"no_limit"}},"players":[{"seat":0,"name":"Doyle Brunson","stack":100000.0,"hole_cards":"T♠ 2♥"},{"seat":1,"name":"Eli Elezra","stack":100000.0,"hole_cards":"8♣ 3♥"},{"seat":2,"name":"Antonio Esfandiari","stack":100000.0,"hole_cards":"A♦ Q♣"},{"seat":3,"name":"Gus Hansen","stack":287100.0,"hole_cards":"5♦ 5♣"},{"seat":4,"name":"Daniel Negreanu","stack":387100.0,"hole_cards":"6♠ 6♥"},{"seat":5,"name":"Cory Zeidman","stack":100000.0,"hole_cards":"K♠ J♦"},{"seat":6,"name":"Barry Greenstein","stack":100000.0,"hole_cards":"4♦ 4♣"},{"seat":7,"name":"Amnon Filippi","stack":100000.0,"hole_cards":"7♣ 2♣"}],"board":"9♣ 6♦ 5♥ 5♠ 8♠","streets":{"preflop":{"actions":[{"seat":0,"action":"post","amount":100.0},{"seat":1,"action":"post","amount":100.0},{"seat":2,"action":"post","amount":100.0},{"seat":3,"action":"post","amount":100.0},{"seat":4,"action":"post","amount":100.0},{"seat":5,"action":"post","amount":100.0},{"seat":6,"action":"post","amount":100.0},{"seat":7,"action":"post","amount":100.0},{"seat":1,"action":"post","amount":300.0},{"seat":2,"action":"post","amount":600.0},{"seat":3,"action":"raise","amount":2100.0},{"seat":4,"action":"raise","amount":5000.0},{"seat":5,"action":"fold"},{"seat":6,"action":"fold"},{"seat":7,"action":"fold"},{"seat":0,"action":"fold"},{"seat":1,"action":"fold"},{"seat":2,"action":"fold"},{"seat":3,"action":"call","amount":2900.0}],"pot":11700.0},"flop":{"cards":"9♣ 6♦ 5♥","actions":[{"seat":3,"action":"check"},{"seat":4,"action":"bet","amount":8000.0},{"seat":3,"action":"raise","amount":26000.0},{"seat":4,"action":"call","amount":18000.0}],"pot":63700.0},"turn":{"card":"5♠","actions":[{"seat":3,"action":"bet","amount":24000.0},{"seat":4,"action":"call","amount":24000.0}],"pot":111700.0},"river":{"card":"8♠","actions":[{"seat":3,"action":"check"},{"seat":4,"action":"bet","amount":65000.0},{"seat":3,"action":"all_in","amount":232000.0,"all_in":true},{"seat":4,"action":"call","amount":167000.0}]}},"results":[{"seat":0,"best_hand":"5♠ 5♥ T♠ 9♣ 8♠","hand_rank":{"value":5470,"name":"Pair","class":"PairOfFives"},"outcome":"fold","net":-100.0},{"seat":1,"best_hand":"8♠ 8♣ 5♠ 5♥ 9♣","hand_rank":{"value":3122,"name":"TwoPair","class":"EightsAndFives"},"outcome":"fold","net":-400.0},{"seat":2,"best_hand":"5♠ 5♥ A♦ Q♣ 9♣","hand_rank":{"value":5318,"name":"Pair","class":"PairOfFives"},"outcome":"fold","net":-700.0},{"seat":3,"best_hand":"5♠ 5♥ 5♦ 5♣ 9♣","hand_rank":{"value":124,"name":"FourOfAKind","class":"FourFives"},"outcome":"win","net":288600.0,"pot_won":575700.0},{"seat":4,"best_hand":"6♠ 6♥ 6♦ 5♠ 5♥","hand_rank":{"value":271,"name":"FullHouse","class":"SixesOverFives"},"outcome":"lose","net":-287100.0},{"seat":5,"best_hand":"5♠ 5♥ K♠ J♦ 9♣","hand_rank":{"value":5371,"name":"Pair","class":"PairOfFives"},"outcome":"fold","net":-100.0},{"seat":6,"best_hand":"5♠ 5♥ 4♦ 4♣ 9♣","hand_rank":{"value":3265,"name":"TwoPair","class":"FivesAndFours"},"outcome":"fold","net":-100.0},{"seat":7,"best_hand":"9♣ 8♠ 7♣ 6♦ 5♥","hand_rank":{"value":1605,"name":"Straight","class":"NineHighStraight"},"outcome":"fold","net":-100.0}]},"controls":{}}
+</script>
+<svg style="max-width:100%;height:auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 290" width="680" height="290" class="bowery" data-layout="ring" data-moment="11/25" role="img" aria-label="Flop · 9♣ 6♦ 5♥" font-family="ui-monospace, Menlo, Consolas, monospace"><rect class="bg" x="0" y="0" width="680" height="290" fill="#ffffff"/><rect class="oval" x="56" y="34" width="568" height="196" rx="98" fill="none" stroke="#000000" stroke-width="3"/><g class="board"><g class="card" data-card="9♣"><rect x="259" y="98" width="30" height="42" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2"/><text x="274" y="116" font-size="15" font-weight="700" text-anchor="middle" fill="#000000">9</text><text x="274" y="132" font-size="15" text-anchor="middle" fill="#000000">♣</text></g><g class="card red" data-card="6♦"><rect x="292" y="98" width="30" height="42" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2"/><text x="307" y="116" font-size="15" font-weight="700" text-anchor="middle" fill="#c00000">6</text><text x="307" y="132" font-size="15" text-anchor="middle" fill="#c00000">♦</text></g><g class="card red" data-card="5♥"><rect x="325" y="98" width="30" height="42" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2"/><text x="340" y="116" font-size="15" font-weight="700" text-anchor="middle" fill="#c00000">5</text><text x="340" y="132" font-size="15" text-anchor="middle" fill="#c00000">♥</text></g><rect class="slot" x="358" y="98" width="30" height="42" rx="4" fill="none" stroke="#888888" stroke-width="2" stroke-dasharray="4 3"/><rect class="slot" x="391" y="98" width="30" height="42" rx="4" fill="none" stroke="#888888" stroke-width="2" stroke-dasharray="4 3"/></g><text class="pot" x="340" y="163" font-size="16" font-weight="700" text-anchor="middle" fill="#000000">POT 11,700</text><g class="seat folded" data-seat="0"><rect class="plate" x="0" y="98" width="112" height="68" fill="#ffffff" stroke="#888888" stroke-width="2"/><text class="name" x="4" y="112" font-size="11" font-weight="700" text-anchor="start" fill="#888888">Doyle Brunson</text><text class="stack" x="4" y="126" font-size="11" text-anchor="start" fill="#888888">fold</text><text class="marks" x="108" y="126" font-size="11" font-weight="700" text-anchor="end" fill="#888888">D</text></g><g class="seat folded" data-seat="1"><rect class="plate" x="0" y="0" width="112" height="68" fill="#ffffff" stroke="#888888" stroke-width="2"/><text class="name" x="4" y="14" font-size="11" font-weight="700" text-anchor="start" fill="#888888">Eli Elezra</text><text class="stack" x="4" y="28" font-size="11" text-anchor="start" fill="#888888">fold</text><text class="marks" x="108" y="28" font-size="11" font-weight="700" text-anchor="end" fill="#888888">SB</text></g><g class="seat folded" data-seat="2"><rect class="plate" x="284" y="0" width="112" height="68" fill="#ffffff" stroke="#888888" stroke-width="2"/><text class="name" x="288" y="14" font-size="11" font-weight="700" text-anchor="start" fill="#888888">Antonio Esfandi…</text><text class="stack" x="288" y="28" font-size="11" text-anchor="start" fill="#888888">fold</text><text class="marks" x="392" y="28" font-size="11" font-weight="700" text-anchor="end" fill="#888888">BB</text></g><g class="seat to-act" data-seat="3"><rect class="plate" x="568" y="0" width="112" height="68" fill="#ffe94d" stroke="#000000" stroke-width="3"/><text class="name" x="572" y="14" font-size="11" font-weight="700" text-anchor="start" fill="#000000">Gus Hansen</text><text class="stack" x="572" y="28" font-size="11" text-anchor="start" fill="#000000">282,000</text><text class="marks" x="676" y="28" font-size="11" font-weight="700" text-anchor="end" fill="#000000"></text><g class="card red" data-card="5♦"><rect x="572" y="31" width="24" height="34" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2"/><text x="584" y="45" font-size="12" font-weight="700" text-anchor="middle" fill="#c00000">5</text><text x="584" y="58" font-size="12" text-anchor="middle" fill="#c00000">♦</text></g><g class="card" data-card="5♣"><rect x="599" y="31" width="24" height="34" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2"/><text x="611" y="45" font-size="12" font-weight="700" text-anchor="middle" fill="#000000">5</text><text x="611" y="58" font-size="12" text-anchor="middle" fill="#000000">♣</text></g><text class="odds" x="676" y="52" font-size="18" font-weight="700" text-anchor="end" fill="#000000">7%</text></g><g class="seat" data-seat="4"><rect class="plate" x="568" y="98" width="112" height="68" fill="#ffffff" stroke="#000000" stroke-width="2"/><text class="name" x="572" y="112" font-size="11" font-weight="700" text-anchor="start" fill="#000000">Daniel Negreanu</text><text class="stack" x="572" y="126" font-size="11" text-anchor="start" fill="#000000">382,000</text><text class="marks" x="676" y="126" font-size="11" font-weight="700" text-anchor="end" fill="#000000"></text><g class="card" data-card="6♠"><rect x="572" y="129" width="24" height="34" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2"/><text x="584" y="143" font-size="12" font-weight="700" text-anchor="middle" fill="#000000">6</text><text x="584" y="156" font-size="12" text-anchor="middle" fill="#000000">♠</text></g><g class="card red" data-card="6♥"><rect x="599" y="129" width="24" height="34" rx="3" fill="#ffffff" stroke="#000000" stroke-width="2"/><text x="611" y="143" font-size="12" font-weight="700" text-anchor="middle" fill="#c00000">6</text><text x="611" y="156" font-size="12" text-anchor="middle" fill="#c00000">♥</text></g><text class="odds" x="676" y="150" font-size="18" font-weight="700" text-anchor="end" fill="#000000">93%</text></g><g class="seat folded" data-seat="5"><rect class="plate" x="568" y="196" width="112" height="68" fill="#ffffff" stroke="#888888" stroke-width="2"/><text class="name" x="572" y="210" font-size="11" font-weight="700" text-anchor="start" fill="#888888">Cory Zeidman</text><text class="stack" x="572" y="224" font-size="11" text-anchor="start" fill="#888888">fold</text><text class="marks" x="676" y="224" font-size="11" font-weight="700" text-anchor="end" fill="#888888"></text></g><g class="seat folded" data-seat="6"><rect class="plate" x="284" y="196" width="112" height="68" fill="#ffffff" stroke="#888888" stroke-width="2"/><text class="name" x="288" y="210" font-size="11" font-weight="700" text-anchor="start" fill="#888888">Barry Greenstein</text><text class="stack" x="288" y="224" font-size="11" text-anchor="start" fill="#888888">fold</text><text class="marks" x="392" y="224" font-size="11" font-weight="700" text-anchor="end" fill="#888888"></text></g><g class="seat folded" data-seat="7"><rect class="plate" x="0" y="196" width="112" height="68" fill="#ffffff" stroke="#888888" stroke-width="2"/><text class="name" x="4" y="210" font-size="11" font-weight="700" text-anchor="start" fill="#888888">Amnon Filippi</text><text class="stack" x="4" y="224" font-size="11" text-anchor="start" fill="#888888">fold</text><text class="marks" x="108" y="224" font-size="11" font-weight="700" text-anchor="end" fill="#888888"></text></g><text class="caption" x="8" y="284" font-size="12" text-anchor="start" fill="#000000">Flop · 9♣ 6♦ 5♥</text></svg>
+</bowery-table>
+<script type="module" src="../bowery/bowery.js"></script>
+<p>So, come along, as I show you how to turn failing into your superpower. Or don't.
+You're still going to fail. The question is, will you see it as the gift it really is?</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../prelude/ch00_-telos.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../prelude/ch00b-what_this_is.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+
+                    <footer class="page-footer">
+                        <a href="https://github.com/abstecker/rust4failures">https://github.com/abstecker/rust4failures</a> v0.1.4
+                    </footer>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../prelude/ch00_-telos.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../prelude/ch00b-what_this_is.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

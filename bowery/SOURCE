@@ -1,0 +1,5 @@
+bowery v0.3.0 — the <bowery-table> browser build, vendored unchanged.
+source:  https://github.com/ImperialBower/bowery/tree/v0.3.0
+release: https://github.com/ImperialBower/bowery/releases/tag/v0.3.0
+asset:   bowery-v0.3.0.tar.gz (its MANIFEST.sha256 verified by bowery/fetch.sh)
+license: MIT OR Apache-2.0 (LICENSE-MIT, LICENSE-APACHE beside this file)
