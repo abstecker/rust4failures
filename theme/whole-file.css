@@ -1,0 +1,55 @@
+/* The "whole file" popup on a block written in parts (EPIC-24), opened by
+   theme/whole-file.js from the header above each part fence. */
+.bower-whole-file-host {
+    position: relative;
+}
+
+.bower-whole-file-button {
+    font: inherit;
+    color: var(--links, #4183c4);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline dotted;
+}
+
+.bower-whole-file-popup {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 50;
+    margin-top: 0.3em;
+    width: min(80ch, 85vw);
+    border: 1px solid var(--table-border-color, #ccc);
+    border-radius: 4px;
+    background: var(--bg, #fff);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.bower-whole-file-title {
+    padding: 0.3em 0.8em;
+    font-size: 0.85em;
+    border-bottom: 1px solid var(--table-border-color, #ccc);
+}
+
+.bower-whole-file-popup pre {
+    margin: 0;
+    max-height: 60vh;
+    overflow: auto;
+}
+
+.bower-whole-file-popup code {
+    font-size: 0.85em;
+}
+
+/* This part's lines: bold, and a faint band so they read at a glance. */
+.bower-part-line {
+    font-weight: bold;
+    background: var(--quote-bg, rgba(127, 127, 127, 0.15));
+}
+
+/* Every other line, dimmed so this part's stand out in any theme. */
+.bower-other-line {
+    opacity: 0.5;
+}

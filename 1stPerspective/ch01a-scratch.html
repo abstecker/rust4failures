@@ -1,0 +1,412 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Command Line - Rust for Failures</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="How controlled failing is the way to build solid systems.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../theme/step-meta.css">
+        <link rel="stylesheet" href="../theme/whole-file.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rust for Failures</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<h1 id="the-command-line-perspective---scratch"><a class="header" href="#the-command-line-perspective---scratch">The Command Line Perspective - scratch</a></h1>
+<p>When I code I like to be able to play with my code. While I am a fanatic about testing, there<sup id="fnref-2"><a href="../FOOTNOTES.html#fn-2">2</a></sup>
+is a fundamental weakness in unit testing: all unit tests are self fulfilling prophecies.As a
+developer, you need to conceive it, to create it. The thing is, visualizing things is something
+that can be rather challenging for people. We have so many built in preconceived notions, and
+compound on top of the fact that the human brain can be very bad at picturing things it has
+never seen before. This is why I always have a command line perspective on my core libraries.</p>
+<p>As a <a href="https://www.youtube.com/watch?v=1uvr7CJazqE">100x Hackerman</a> (aka lazy), I don't usually want to take the time to write my own
+command line parser, so I look for the standard for whatever language I am coding in at th
+moment. For Rust, I would use <a href="https://github.com/clap-rs/clap">clap</a> and add it to the library this way:</p>
+<pre><code class="language-shell">$&gt; cargo add clap 
+</code></pre>
+<p><del>NOPE!</del> Scratch that. We're writing a library, so we don't want command line parsing to be a part of the dependencies
+that users download, so let's make it a dev dependency:</p>
+<pre><code class="language-shell">$&gt; cargo add clap --dev
+</code></pre>
+<p>This will add the library to our Cargo.toml in a dev-dependencies section:</p>
+<pre><code class="language-toml">[dev-dependencies]
+clap = "4.6.7"
+</code></pre>
+<p>But, wait a minute. Why are we skipping ahead of ourselves and using a custom library when we haven't even rolled our own? Let's
+throw away clap and do it ourselves first.</p>
+<h2 id="stdenv"><a class="header" href="#stdenv">std::env</a></h2>
+<p>There are two ways you can approach command line input. The simplest way is to just read the value in from the arguments
+passed into the program like this:</p>
+<p><a id="step-command_line_pk"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-003-command_line_pk/examples/pkenv.rs" title="View full file">💾 <code>examples/pkenv.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-003-command_line_pk/examples/pkenv.rs#L1-L1" title="View source">L1–L1</a> · step 003 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-003-command_line_pk" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-003-command_line_pk" title="Browse repo">browse</a></sub></span><span class="bower-whole-file" hidden data-file="examples/pkenv.rs" data-lang="rust" data-lines="1-1" data-code="use std::env;&#10;fn main() {&#10;    let args: Vec&lt;String&gt; = env::args().collect();&#10;    let cards = args.get(1).expect(&quot;please provide cards&quot;);&#10;    println!(&quot;Your cards: {cards}&quot;);&#10;}&#10;"></span></p>
+<pre><code class="language-rust">use std::env;</code></pre>
+<p>We're importing the <a href="https://doc.rust-lang.org/std/env/index.html"><code>std::env</code></a> module. The Rust Standard Library, <code>std</code>
+library is going to be your <a href="https://en.wikipedia.org/wiki/Batman&#x27;s_utility_belt">bat utility belt</a>
+throughout your journey as a Rust developer.<sup id="fnref-3"><a href="../FOOTNOTES.html#fn-3">3</a></sup> The Rust core
+group is insanely well thought out, and a lot of their decisions have been learning from the mistakes of the brave
+pioneers that went before them.<sup id="fnref-4"><a href="../FOOTNOTES.html#fn-4">4</a></sup></p>
+<p>I will confess that in my early days as a developer, I spent a lot of time studying the core documentation of the
+languages I was programming in. Yes, I was one of those assholes that read the Monster Manual and the D&amp;D Dungeon
+Master's Guide even though I was just a player. You can't find a better collection of free online reading material
+than what is available for Rust developers.<sup id="fnref-5"><a href="../FOOTNOTES.html#fn-5">5</a></sup></p>
+<p><code>std::env</code> is for interacting with the environment our program is running under. <strong>One important thing to call out</strong> is
+that we wouldn't be doing that in our actual library. This is just an example program that will be included in the repository.
+Normally, we would be including this as a part of another executable program as a dependency.</p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-003-command_line_pk/examples/pkenv.rs" title="View full file">💾 <code>examples/pkenv.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-003-command_line_pk/examples/pkenv.rs#L2-L3" title="View source">L2–L3</a> · part 2 of 4</sub></span><span class="bower-whole-file" hidden data-file="examples/pkenv.rs" data-lang="rust" data-lines="2-3" data-code="use std::env;&#10;fn main() {&#10;    let args: Vec&lt;String&gt; = env::args().collect();&#10;    let cards = args.get(1).expect(&quot;please provide cards&quot;);&#10;    println!(&quot;Your cards: {cards}&quot;);&#10;}&#10;"></span></p>
+<pre><code class="language-rust">fn main() {
+    let args: Vec&lt;String&gt; = env::args().collect();</code></pre>
+<p>There's a lot going on in this start of this program. You'll have to forgive me if I am going into so much detail, but
+I want you to get a feel for the devil in the details of this language. Every language has a particular flow to how
+it works, and it helps a lot once you start to get the feel for it.</p>
+<p><code>fn main() {</code> is the start of every Rust executable program.</p>
+<p>Let's break down  <code>let args: Vec&lt;String&gt; = env::args().collect()</code>:</p>
+<ul>
+<li><a href="https://doc.rust-lang.org/std/env/fn.args.html">env::args()</a> returns an <a href="https://doc.rust-lang.org/std/env/struct.Args.html">Args</a> <a href="https://doc.rust-lang.org/book/ch05-01-defining-structs.html">struct</a>.
+<ul>
+<li><a href="https://doc.rust-lang.org/std/env/struct.Args.html">Args</a> implements the <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html">Iterator</a> <a href="https://doc.rust-lang.org/book/ch10-02-traits.html">trait</a>.
+<ul>
+<li><a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html">Iterator</a> includes the <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect">collect()</a> function
+<ul>
+<li><a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect">collect()</a> returns a generic <a href="https://doc.rust-lang.org/std/collections/">collection</a>.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>let args</code> declares an immutable variable. By default, variables in Rust are immutable.<sup id="fnref-6"><a href="../FOOTNOTES.html#fn-6">6</a></sup>
+<ul>
+<li><a href="https://doc.rust-lang.org/std/vec/struct.Vec.html">Vec</a>&lt;<a href="http://doc.rust-lang.org/std/string/struct.String.html">String</a>&gt; is what we call a type hint. Since <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect">collect()</a> returns a generic collection of things, we need to give <code>args</code> a hint as to what we are passing in. TBH, this can be some of the most mind bending aspects of Rust programming... at least to me.</li>
+</ul>
+</li>
+</ul>
+<p>So basically, read in the arguments passed into the program and collect them into a vector of Strings.</p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-003-command_line_pk/examples/pkenv.rs" title="View full file">💾 <code>examples/pkenv.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-003-command_line_pk/examples/pkenv.rs#L4-L4" title="View source">L4–L4</a> · part 3 of 4</sub></span><span class="bower-whole-file" hidden data-file="examples/pkenv.rs" data-lang="rust" data-lines="4-4" data-code="use std::env;&#10;fn main() {&#10;    let args: Vec&lt;String&gt; = env::args().collect();&#10;    let cards = args.get(1).expect(&quot;please provide cards&quot;);&#10;    println!(&quot;Your cards: {cards}&quot;);&#10;}&#10;"></span></p>
+<pre><code class="language-rust">    let cards = args.get(1).expect("please provide cards");</code></pre>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-003-command_line_pk/examples/pkenv.rs" title="View full file">💾 <code>examples/pkenv.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-003-command_line_pk/examples/pkenv.rs#L5-L6" title="View source">L5–L6</a> · part 4 of 4</sub></span><span class="bower-whole-file" hidden data-file="examples/pkenv.rs" data-lang="rust" data-lines="5-6" data-code="use std::env;&#10;fn main() {&#10;    let args: Vec&lt;String&gt; = env::args().collect();&#10;    let cards = args.get(1).expect(&quot;please provide cards&quot;);&#10;    println!(&quot;Your cards: {cards}&quot;);&#10;}&#10;"></span></p>
+<pre><code class="language-rust">    println!("Your cards: {cards}");
+}</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-003-command_line_pk</code></span></p>
+<h3 id="lets-try-it"><a class="header" href="#lets-try-it">Let's try it</a></h3>
+<p><span class="step-output"><sub>$ cargo run -q --example pkenv -- AS · step 003 of rust4failures</sub></span></p>
+<pre><code class="language-text">Your cards: AS
+</code></pre>
+<h2 id="stdio"><a class="header" href="#stdio">std::io</a></h2>
+<h3 id="one-line-in-one-reply-out"><a class="header" href="#one-line-in-one-reply-out">One line in, one reply out</a></h3>
+<p>What the program says back doesn't belong in the code that reads and prints.
+Keep it in a <code>Session</code> that takes a line and returns a line, and anything can
+drive it: a terminal, a test, a web page.</p>
+<p><code>Session</code> lives in the library, in <code>src/session.rs</code>. That doesn't break the
+rule from <code>std::env</code>: <code>Session</code> never reads or prints, so the library still
+knows nothing about terminals. Its code isn't in this chapter; it's in the
+repository. The library hands it out:</p>
+<p><a id="step-pkio_session"></a></p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-004-pkio_session/src/lib.rs" title="View full file">💾 <code>src/lib.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-004-pkio_session/src/lib.rs#L15-L17" title="View source">L15–L17</a> · step 004 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-004-pkio_session" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-004-pkio_session" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">
+mod session;
+pub use session::Session;</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-004-pkio_session</code></span></p>
+<p><code>Session</code> also compiles to WebAssembly, so that the same <code>Session</code> can answer
+in this page. The crate builds a second kind of library for that, a <code>cdylib</code>,
+and the <code>wasm-bindgen</code> attributes on <code>Session</code> sit behind a <code>wasm</code> feature.
+Without the feature the crate is plain Rust. <code>wasm-bindgen</code> is an optional
+dependency for the same reason <code>clap</code> was a dev dependency: users who don't
+ask for the feature never download it.</p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-004-pkio_session/Cargo.toml" title="View full file">💾 <code>Cargo.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-004-pkio_session/Cargo.toml#L16-L25" title="View source">L16–L25</a> · step 004 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-004-pkio_session" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-004-pkio_session" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[features]
+wasm = ["dep:wasm-bindgen"]
+
+[dependencies.wasm-bindgen]
+version = "0.2"
+optional = true
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-004-pkio_session</code></span></p>
+<p>That needs the compiler's WebAssembly target, and naming it in the pinned
+toolchain means anyone who clones the repository gets it the first time they
+build:</p>
+<p><span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-004-pkio_session/rust-toolchain.toml" title="View full file">💾 <code>rust-toolchain.toml</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-004-pkio_session/rust-toolchain.toml#L1-L4" title="View source">L1–L4</a> · step 004 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-004-pkio_session" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-004-pkio_session" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-toml">[toolchain]
+channel = "1.99.0"
+components = ["clippy", "rustfmt"]
+targets = ["wasm32-unknown-unknown"]
+</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-004-pkio_session</code></span></p>
+<h3 id="a-terminal-to-type-in"><a class="header" href="#a-terminal-to-type-in">A terminal to type in</a></h3>
+<p><a id="step-command_line_pkio"></a>
+<span class="step-meta"><sub><a href="https://github.com/abstecker/rust4failures/blob/step-005-command_line_pkio/examples/pkio.rs" title="View full file">💾 <code>examples/pkio.rs</code></a> · <a href="https://github.com/abstecker/rust4failures/blob/step-005-command_line_pkio/examples/pkio.rs#L1-L41" title="View source">L1–L41</a> · step 005 of rust4failures · <a href="https://github.com/abstecker/rust4failures/commit/step-005-command_line_pkio" title="View diff">diff</a> · <a href="https://github.com/abstecker/rust4failures/tree/step-005-command_line_pkio" title="Browse repo">browse</a></sub></span></p>
+<pre><code class="language-rust">use std::io;
+use std::io::{IsTerminal, Write};
+
+use rust4failures::Session;
+
+/// For this version of reading a string in from the command line, we are going to
+/// us Rust's standard library https://doc.rust-lang.org/std/io/#standard-input-and-output module,
+/// which handles input, the i, and output, the o.
+///
+/// Reading and printing live here. What to say back lives in `Session`.
+fn main() -&gt; io::Result&lt;()&gt; {
+    let mut session = Session::new();
+    // Only a person at a terminal needs a prompt. When the input is piped in,
+    // a prompt is just noise in the output.
+    let interactive = io::stdin().is_terminal();
+
+    loop {
+        // Step 1: Prompt the user for his cards:
+        if interactive {
+            print!("hand&gt; ");
+            // OK this is ugly. This is why I use libraries like `clap`.
+            io::stdout().flush()?;
+        }
+
+        // Step 2: Pass the inpu`t into the variable `input`.
+        // Our String is `mut`, which stands for mutable so that we
+        // can set a value to it later on. One of Rust's code design philosophies
+        // is that things are mutable only when they need to be, which reduces the
+        // probability of a whole lot of bugs getting through.
+        let mut input = String::new();
+
+        // `read_line` returns how many bytes it read. Zero means the input is
+        // over: Ctrl-D at a terminal.
+        if io::stdin().read_line(&amp;mut input)? == 0 {
+            return Ok(());
+        }
+
+        // Step 3: Answer.
+        println!("{}", session.eval(&amp;input));
+    }
+}</code></pre>
+<p><span class="step-checkout">$&gt; <code>git checkout step-005-command_line_pkio</code></span></p>
+<h3 id="lets-try-it-1"><a class="header" href="#lets-try-it-1">Let's try it</a></h3>
+<p><span class="step-output"><sub>$ cargo run -q --example pkio · step 005 of rust4failures</sub></span></p>
+<div class="bower-repl" data-module="../repl/rust4failures/005/session.js" data-prompt="hand&gt;">
+<pre class="bower-repl-log"></pre>
+</div>
+<script type="module" src="../repl/repl.js"></script>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../1stPerspective/ch01-local_development.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../1stPerspective/ch02-cards.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+
+                    <footer class="page-footer">
+                        <a href="https://github.com/abstecker/rust4failures">https://github.com/abstecker/rust4failures</a> v0.1.4
+                    </footer>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../1stPerspective/ch01-local_development.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../1stPerspective/ch02-cards.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../theme/whole-file.js"></script>
+
+
+
+    </div>
+    </body>
+</html>
