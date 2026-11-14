@@ -1,0 +1,6 @@
+the_hand.yaml — pkcore's "The Hand" (Hansen vs Negreanu, High Stakes Poker
+Season 2), recorded from the engine after DEFECT_040, copied unchanged.
+source:  https://github.com/ImperialBower/pkcore/blob/f5adebf62988b108966b31ceafaf55150ace4672/data/hands/the_hand.yaml
+commit:  f5adebf62988b108966b31ceafaf55150ace4672 (pkcore EPIC-93, "Epic 93 faithful replay")
+license: MIT OR Apache-2.0 (pkcore's)
+Do not edit it here: change the hand in pkcore, record it again, and copy it.
